@@ -1,4 +1,5 @@
 #include "fileinit.h"
+#include "radixsort.h"
 
 using namespace std;
 // 删除字符串后面的换行符
@@ -109,6 +110,30 @@ int main(int argc, char* argv[]) {
   a->over();
   tPrint.join();
 
+
+  /*
+  std::vector<int> arr;
+  const int numElements = 20;
+  // 使用随机设备和分布生成随机数
+  std::random_device rd;
+  std::mt19937 gen(rd());
+  int a = 2147483646;
+  std::uniform_int_distribution<int> distribution(1, a);
+
+  // 将随机数插入到向量中
+  for (int i = 0; i < numElements; ++i) {
+	  arr.push_back(distribution(gen));
+  }
+
+  std::vector<int> arrOut;
+  arrOut = RadixSort(arr);
+
+  std::cout << "Sorted array: ";
+  for (int num : arrOut) {
+	  std::cout << num << " ";
+  }
+
+  system("pause");*/
 
   return 0;
 }

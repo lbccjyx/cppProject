@@ -10,6 +10,9 @@
 #include "socket.h"
 #include <string>
 #include <mutex>
+#include <random>
+#include <algorithm>
+
 #pragma once
 
 
@@ -22,7 +25,6 @@ static std::condition_variable threadPrintCv;
 static bool threadPrintDone = false;
 
 void init();
-
 class threadPrint
 {
 public:

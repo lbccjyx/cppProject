@@ -25,3 +25,5 @@ void init()
     std::cout << "pre-standard C++." << __cplusplus<<std::endl;
     std::cout << "\n";
 }
+
+
