@@ -101,17 +101,15 @@ void threadFunction() {
 int main(int argc, char* argv[]) {
   init();
 
-  threadPrint* a = new threadPrint();
-  std::thread tPrint([a] { a->worker(); });
+  //threadPrint* a = new threadPrint();
+  //std::thread tPrint([a] { a->worker(); });
 
-  std::thread t(threadFunction);
-  t.join();
+  //std::thread t(threadFunction);
+  //t.join();
 
-  a->over();
-  tPrint.join();
+  //a->over();
+  //tPrint.join();
 
-
-  /*
   std::vector<int> arr;
   const int numElements = 20;
   // 使用随机设备和分布生成随机数
@@ -133,7 +131,7 @@ int main(int argc, char* argv[]) {
 	  std::cout << num << " ";
   }
 
-  system("pause");*/
+  system("pause");
 
   return 0;
 }
