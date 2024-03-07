@@ -1,5 +1,6 @@
 #include "fileinit.h"
 #include "radixsort.h"
+#include "threadForCout.h"
 
 using namespace std;
 // 删除字符串后面的换行符
@@ -98,38 +99,51 @@ void threadFunction() {
   }
 }
 
+void test01()
+{
+	SendaiCSBattleSignUpReportUpdate haha;
+	haha.d = 1.1;
+	haha.i = 2;
+	std::shared_ptr<AllStruct> pAll = std::make_shared<AllStruct>();
+	pAll->nType = MSGACT_SENDAI;
+	pAll->data.normalP = &haha;
+
+	XXPrint("hehehhe", 3.1456544, *pAll);
+}
+
 int main(int argc, char* argv[]) {
   init();
 
-  //threadPrint* a = new threadPrint();
-  //std::thread tPrint([a] { a->worker(); });
+  threadPrint* a = new threadPrint();
+  std::thread tPrint([a] { a->worker(); });
 
   //std::thread t(threadFunction);
   //t.join();
+  test01();
 
-  //a->over();
-  //tPrint.join();
+  a->over();
+  tPrint.join();
 
-  std::vector<int> arr;
-  const int numElements = 20;
-  // 使用随机设备和分布生成随机数
-  std::random_device rd;
-  std::mt19937 gen(rd());
-  int a = 2147483646;
-  std::uniform_int_distribution<int> distribution(1, a);
+  //std::vector<int> arr;
+  //const int numElements = 20;
+  //// 使用随机设备和分布生成随机数
+  //std::random_device rd;
+  //std::mt19937 gen(rd());
+  //int a = 2147483646;
+  //std::uniform_int_distribution<int> distribution(1, a);
 
-  // 将随机数插入到向量中
-  for (int i = 0; i < numElements; ++i) {
-	  arr.push_back(distribution(gen));
-  }
+  //// 将随机数插入到向量中
+  //for (int i = 0; i < numElements; ++i) {
+	 // arr.push_back(distribution(gen));
+  //}
 
-  std::vector<int> arrOut;
-  arrOut = RadixSort(arr);
+  //std::vector<int> arrOut;
+  //arrOut = RadixSort(arr);
 
-  std::cout << "Sorted array: ";
-  for (int num : arrOut) {
-	  std::cout << num << " ";
-  }
+  //std::cout << "Sorted array: ";
+  //for (int num : arrOut) {
+	 // std::cout << num << " ";
+  //}
 
   system("pause");
 

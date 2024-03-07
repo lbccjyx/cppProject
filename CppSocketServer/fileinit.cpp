@@ -1,9 +1,6 @@
 #include "fileinit.h"
 
 
-threadPrint* threadPrint::instance = nullptr;
-
-
 void init()
 {
     system("CHCP 65001");
