@@ -18,5 +18,19 @@ add_executable(CppSocketServer
     src/socket.cpp
     src/threadForCout.cpp
 )
-
 target_link_libraries(CppSocketServer PRIVATE ${CONAN_LIBS})
+target_include_directories(CppSocketServer PRIVATE ${Boost_INCLUDE_DIRS})  # Add this line to include Boost headers
+
+#######################################another one######################################
+find_package(Boost REQUIRED)
+add_executable(Test2Any
+    test/main.cpp
+    test/test_calculator.cpp
+)
+
+target_link_libraries(Test2Any PRIVATE ${CONAN_LIBS}) # Boost::boost
+target_include_directories(Test2Any PRIVATE ${Boost_INCLUDE_DIRS})  # Add this line to include Boost headers
+
+set_target_properties(Test2Any PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+)

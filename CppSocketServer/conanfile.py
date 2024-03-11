@@ -3,7 +3,7 @@ from conan.tools.cmake import CMake
 
 class ImguiOpencvDemo(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-    #requires = "nlohmann_json/3.11.3"
+    requires = "boost/1.76.0"
 
     generators = "CMakeToolchain"
 
