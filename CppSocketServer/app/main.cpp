@@ -117,7 +117,7 @@ void threadFunction() {
 void test01()
 {
 	SendaiCSBattleSignUpReportUpdate haha;
-	haha.d = 1.1;
+	haha.d = 657;
 	haha.i = 2;
 	std::shared_ptr<AllStruct> pAll = std::make_shared<AllStruct>();
 	pAll->nType = MSGACT_SENDAI;
