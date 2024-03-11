@@ -3,21 +3,32 @@
 #include "threadForCout.h"
 
 using namespace std;
+
+#ifdef UNICODE
+#define tstring std::wstring
+#define tprintf wprintf
+#define Tcsdup wcsdup
+#else
+#define tstring std::string
+#define tprintf printf
+#define Tcsdup _strdup
+#endif
+
 // 删除字符串后面的换行符
 static inline void removeTrailingNewline(std::string &s) {
     s.erase(s.find_last_not_of("\n\r") + 1);
 }
 
-bool executeCommand(const wchar_t* command, const wchar_t* workingDirectory) {
+bool executeCommand(const TCHAR* command, const TCHAR* workingDirectory) {
 	// 初始化STARTUPINFO和PROCESS_INFORMATION结构
 	STARTUPINFO si;
 	PROCESS_INFORMATION pi;
 	ZeroMemory(&si, sizeof(si));
 	si.cb = sizeof(si);
 	ZeroMemory(&pi, sizeof(pi));
-    si.hStdOutput = NULL;
+	si.hStdOutput = NULL;
 
-	wchar_t* commandCopy = _wcsdup(command);
+	TCHAR* commandCopy = Tcsdup(command);
 
 	// 创建进程
 	if (CreateProcess(NULL, commandCopy, NULL, NULL, FALSE, 0, NULL,
@@ -29,11 +40,11 @@ bool executeCommand(const wchar_t* command, const wchar_t* workingDirectory) {
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
 
-        XXPrint("Command executed successfully.\n");
+		XXPrint("Command executed successfully.\n");
 		return true;
 	}
 	else {
-        XXPrint("Failed to execute command.\n");
+		XXPrint("Failed to execute command.\n");
 		return false;
 	}
 }
@@ -54,14 +65,18 @@ unsigned __stdcall Answer(void* a) {
         if(strDir.length() <= 0 || strCMD.length() <= 0)
             break;
 
+#ifdef UNICODE
         XXPrint("匹配命令:\tDIR:", strDir,"\tCMD:", strCMD, "\n");
         wchar_t* wcDir = new wchar_t[strDir.size()];
         swprintf(wcDir, strDir.size() + 1, L"%S", strDir.c_str());
 
 		wchar_t* wcCMD = new wchar_t[strCMD.size()];
 		swprintf(wcCMD, strCMD.size() + 1, L"%S", strCMD.c_str());
-
-        executeCommand(wcCMD, wcDir);
+		executeCommand(wcCMD, wcDir);
+#else
+		executeCommand(strDir.c_str(), strCMD.c_str());
+#endif
+        
     }
   }
 
