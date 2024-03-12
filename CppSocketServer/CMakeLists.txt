@@ -4,14 +4,17 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 # 项目名称和语言
 project(CppSocketServer LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 17)
-
-include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
+set(CMAKE_CXX_STANDARD 20)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+
+# Include Conan
+include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
+
 
 # 设置VS中的启动项目
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CppSocketServer)
-
+find_package(Boost REQUIRED)
+#find_package(nlohmann_json)  由于nlohmann_json本身没有库
 add_executable(CppSocketServer 
     app/main.cpp 
     src/fileinit.cpp
@@ -19,11 +22,12 @@ add_executable(CppSocketServer
     src/socket.cpp
     src/threadForCout.cpp
 )
-target_link_libraries(CppSocketServer PRIVATE ${CONAN_LIBS})
-target_include_directories(CppSocketServer PRIVATE ${Boost_INCLUDE_DIRS})  # Add this line to include Boost headers
-
+target_link_libraries(CppSocketServer PRIVATE ${CMAKE_LIBRARY_PATH})
+target_include_directories(CppSocketServer PRIVATE ${CMAKE_INCLUDE_PATH})
+set_target_properties(CppSocketServer PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_server
+)
 #######################################another one######################################
-find_package(Boost REQUIRED)
 add_executable(Test2Any
     test/main.cpp
     test/unit_test.cpp
@@ -31,9 +35,8 @@ add_executable(Test2Any
     src/radixsort.cpp
 )
 
-target_link_libraries(Test2Any PRIVATE ${CONAN_LIBS}) # Boost::boost
-target_include_directories(Test2Any PRIVATE ${Boost_INCLUDE_DIRS})  # Add this line to include Boost headers
-
+target_link_libraries(Test2Any PRIVATE ${CMAKE_LIBRARY_PATH})
+target_include_directories(Test2Any PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(Test2Any PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_test
 )
