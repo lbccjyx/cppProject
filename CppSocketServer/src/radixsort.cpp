@@ -15,6 +15,8 @@ int getDigit(int maxA)
 
 std::vector<int> RadixSort(std::vector<int>& arr)
 {
+	if (arr.size() <= 0)
+		return {};
 	auto maxElement = std::max_element(arr.begin(), arr.end());
 	int maxA = *maxElement;
 

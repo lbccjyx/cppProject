@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD 17)
 include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+# 设置VS中的启动项目
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CppSocketServer)
 
 add_executable(CppSocketServer 
@@ -25,7 +26,9 @@ target_include_directories(CppSocketServer PRIVATE ${Boost_INCLUDE_DIRS})  # Add
 find_package(Boost REQUIRED)
 add_executable(Test2Any
     test/main.cpp
-    test/test_calculator.cpp
+    test/unit_test.cpp
+    src/threadForCout.cpp
+    src/radixsort.cpp
 )
 
 target_link_libraries(Test2Any PRIVATE ${CONAN_LIBS}) # Boost::boost
