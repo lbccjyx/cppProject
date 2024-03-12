@@ -22,11 +22,15 @@ add_executable(CppSocketServer
     src/socket.cpp
     src/threadForCout.cpp
 )
+
 target_link_libraries(CppSocketServer PRIVATE ${CMAKE_LIBRARY_PATH})
 target_include_directories(CppSocketServer PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(CppSocketServer PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_server
 )
+# 把cfg文件复制到相关位置 代码中就无需绝对路径或者相对路径
+configure_file(cfg/listen_cmd_server_cfg.json ${CMAKE_BINARY_DIR}/listen_cmd_server_cfg.json COPYONLY)
+
 #######################################another one######################################
 add_executable(Test2Any
     test/main.cpp
