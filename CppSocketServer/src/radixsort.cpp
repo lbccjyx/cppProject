@@ -30,7 +30,7 @@ std::vector<int> RadixSort(std::vector<int>& arr)
 // 基数排序的递归函数
 void recursiveRadixSort(std::vector<int>& arrIn, std::vector<int>& arrOut, int nDigit) {
 	// 递归终止条件：已经处理完所有位数
-	if (nDigit == 0 || arrIn.empty()) {
+	if (nDigit == 0 || arrIn.size() <= 1) {
 		arrOut.insert(arrOut.end(), arrIn.begin(), arrIn.end());
 		return;
 	}
