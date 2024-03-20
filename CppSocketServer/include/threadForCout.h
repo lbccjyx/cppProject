@@ -13,18 +13,48 @@ struct SendaiCSBattleSignUpReportUpdate
 {
 	int i;
 	double d;
+
+	~SendaiCSBattleSignUpReportUpdate()
+	{
+		std::cout << "SendaiCSBattleSignUpReportUpdate Destructor\n";
+	}
+	
 };
 
-struct AllStruct
+class AllStruct
 {
+public:
 	int nType = 0;
+	bool bNeedDeleteFlag = false;
 	union MyUnion
 	{
 		void* normalP;
 		SendaiCSBattleSignUpReportUpdate* pSendai;
 	} data;
 
-	AllStruct() : data{} {}
+public:
+	//AllStruct() {
+	//	std::cout << "Constructor\n";
+	//};
+
+	//~AllStruct() {
+	//	std::cout << "Destructor\n";
+	//}; 
+
+	//AllStruct(const AllStruct& other) : data(other.data),nType(other.nType), bNeedDeleteFlag(other.bNeedDeleteFlag){
+	//	std::cout << "Copy Constructor\n";
+	//}
+
+	//AllStruct& operator=(AllStruct& allIn) {
+
+	//	std::cout << "Operator\n";
+	//	if (this != &allIn)
+	//	{
+	//		this->nType = allIn.nType;
+	//		this->data = allIn.data;
+	//	}
+	//	return *this;
+	//};
 };
 
 static std::mutex threadPrintMtx;
@@ -85,6 +115,8 @@ private:
 			case MSGACT_SENDAI:
 				SendaiCSBattleSignUpReportUpdate* p = allStruct.data.pSendai; 
 				std::cout << "SendaiCSBattleSignUpReportUpdate: i = " << p->i << ", d = " << p->d << "\n";
+				if(allStruct.bNeedDeleteFlag)
+					delete p;
 			}
 			
 		}

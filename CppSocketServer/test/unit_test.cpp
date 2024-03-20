@@ -8,14 +8,15 @@
 
 void TestPassArgsInFunction()
 {
-	SendaiCSBattleSignUpReportUpdate haha;
-	haha.d = 657;
-	haha.i = 2;
-	std::shared_ptr<AllStruct> pAll = std::make_shared<AllStruct>();
-	pAll->nType = MSGACT_SENDAI;
-	pAll->data.normalP = &haha;
+	auto p = new SendaiCSBattleSignUpReportUpdate();
+	p->d = 657;
+	p->i = 2;
 
-	XXPrint("hehehhe", 3.1456544, *pAll);
+	AllStruct all;
+	all.nType = MSGACT_SENDAI;
+	all.data.normalP = p;
+	all.bNeedDeleteFlag = true;
+	XXPrint("hehehhe", 3.1456544, all);
 }
 
 
@@ -29,22 +30,24 @@ BOOST_AUTO_TEST_CASE(my_test1) {
 	SendaiCSBattleSignUpReportUpdate haha;
 	haha.d = 657;
 	haha.i = 2;
-	std::shared_ptr<AllStruct> pAll = std::make_shared<AllStruct>();
-	pAll->nType = MSGACT_SENDAI;
-	pAll->data.normalP = &haha;
 
-	XXPrint("hehehhe", 3.1456544, *pAll);
+	AllStruct all;
+	all.nType = MSGACT_SENDAI;
+	all.data.normalP = &haha;
+
+	XXPrint("hehehhe", 3.1456544, all);
 
 	a->over();
 	tPrint.join();
-	std::cout << "my_test1 end\n\n";
+	// 由于等待线程结束后 haha 内存才会被释放 所以不会出现异常
 }
 
 BOOST_AUTO_TEST_CASE(my_test2) {
-	std::cout << "\n\n Test Passing Parameters to another thread by Function\n";
+	std::cout << "\n\nTest Passing Parameters to another thread by Function\n";
 	threadPrint* a = new threadPrint();
 	std::thread tPrint([a] { a->worker(); });
 
+	// 由于存在堆栈中所以内存不会异常
 	TestPassArgsInFunction();
 
 	a->over();
@@ -59,7 +62,7 @@ BOOST_AUTO_TEST_CASE(my_test3) {
 	// 使用随机设备和分布生成随机数
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	int a = 2147483646;
+	int a = 100001;
 	std::uniform_int_distribution<int> distribution(1, a);
 
 	// 将随机数插入到向量中
@@ -74,7 +77,7 @@ BOOST_AUTO_TEST_CASE(my_test3) {
 	for (int num : arrOut) {
 		std::cout << num << " ";
 	}
-	std::cout<<std::endl;
+	std::cout << std::endl;
 
 }
 BOOST_AUTO_TEST_SUITE_END()
