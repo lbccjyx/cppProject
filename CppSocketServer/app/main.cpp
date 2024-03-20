@@ -62,6 +62,7 @@ unsigned __stdcall Answer(void* a) {
     {
 		std::string strDir = myCmdDataJson[r]["dir"];
 		std::string strCMD = myCmdDataJson[r]["cmd"];
+		strCMD += ">nul";
         if(strDir.length() <= 0 || strCMD.length() <= 0)
             break;
 
@@ -74,7 +75,7 @@ unsigned __stdcall Answer(void* a) {
 		swprintf(wcCMD, strCMD.size() + 1, L"%S", strCMD.c_str());
 		executeCommand(wcCMD, wcDir);
 #else
-		executeCommand(strDir.c_str(), strCMD.c_str());
+		executeCommand(strCMD.c_str(), strDir.c_str());
 #endif
         
     }

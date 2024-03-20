@@ -44,3 +44,4 @@ target_include_directories(Test2Any PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(Test2Any PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_test
 )
+configure_file(cfg/cout.bat ${CMAKE_BINARY_DIR}/bin_test/Debug/cout.bat COPYONLY)
