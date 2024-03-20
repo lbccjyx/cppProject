@@ -23,7 +23,7 @@ add_executable(CppSocketServer
     src/threadForCout.cpp
 )
 
-target_link_libraries(CppSocketServer PRIVATE ${CMAKE_LIBRARY_PATH})
+target_link_libraries(CppSocketServer) #${CMAKE_LIBRARY_PATH}
 target_include_directories(CppSocketServer PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(CppSocketServer PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_server
@@ -39,7 +39,7 @@ add_executable(Test2Any
     src/radixsort.cpp
 )
 
-target_link_libraries(Test2Any PRIVATE ${CMAKE_LIBRARY_PATH})
+target_link_libraries(Test2Any) # PRIVATE ${CMAKE_LIBRARY_PATH}
 target_include_directories(Test2Any PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(Test2Any PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_test

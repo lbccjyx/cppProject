@@ -20,9 +20,12 @@ cd build
 @REM 																	  CMAKE_PREFIX_PATH是要编译的文件所在的安装路径
 cmake .. -G "Visual Studio 17 2022"  -DCMAKE_POLICY_DEFAULT_CMP0091=NEW -DCMAKE_PREFIX_PATH=build 
 
-cmake --build . --config Release
-cmake --build . --config Debug
+cmake --build . --config Release -- /m
+cmake --build . --config Debug -- /m
+
 @REM Release\xxx.exe
+@REM start devenv build\CppSocketServer.sln
+
 
 @REM 退出虚拟环境
 deactivate
