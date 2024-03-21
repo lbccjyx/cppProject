@@ -127,6 +127,27 @@ private:
 		}
 	}
 };
+
+
+class ThreadPrintManager {
+public:
+	ThreadPrintManager() {
+		a = new threadPrint();
+		tPrint = std::thread([this] { a->worker(); });
+	}
+
+	~ThreadPrintManager() {
+		a->over();
+		tPrint.join();
+		delete a;
+		system("pause");
+	}
+
+private:
+	threadPrint* a;
+	std::thread tPrint;
+};
+
 // threadPrint* MyThreadPrint = threadPrint::instance;
 #define XXPrint(...) threadPrint::instance->NewPrint(__VA_ARGS__)
 

@@ -24,8 +24,7 @@ BOOST_AUTO_TEST_SUITE(tests_suit)
 
 BOOST_AUTO_TEST_CASE(my_test1) {
 	std::cout << "Test Passing Parameters to another thread in main \n";
-	threadPrint* a = new threadPrint();
-	std::thread tPrint([a] { a->worker(); });
+	ThreadPrintManager ctpm;
 
 	SendaiCSBattleSignUpReportUpdate haha;
 	haha.d = 657;
@@ -37,21 +36,14 @@ BOOST_AUTO_TEST_CASE(my_test1) {
 
 	XXPrint("hehehhe", 3.1456544, all);
 
-	a->over();
-	tPrint.join();
 	// 由于等待线程结束后 haha 内存才会被释放 所以不会出现异常
 }
 
 BOOST_AUTO_TEST_CASE(my_test2) {
 	std::cout << "\n\nTest Passing Parameters to another thread by Function\n";
-	threadPrint* a = new threadPrint();
-	std::thread tPrint([a] { a->worker(); });
-
+	ThreadPrintManager ctpm;
 	// 由于存在堆栈中所以内存不会异常
 	TestPassArgsInFunction();
-
-	a->over();
-	tPrint.join();
 }
 
 BOOST_AUTO_TEST_CASE(my_test3) {

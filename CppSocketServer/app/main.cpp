@@ -117,17 +117,10 @@ void threadFunction() {
 
 int main(int argc, char* argv[]) {
   init();
-
-  threadPrint* a = new threadPrint();
-  std::thread tPrint([a] { a->worker(); });
+  ThreadPrintManager ctpm;
 
   std::thread t(threadFunction);
   t.join();
-
-  a->over();
-  tPrint.join();
-
-  system("pause");
 
   return 0;
 }
