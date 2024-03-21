@@ -16,6 +16,10 @@
     "dir": "D:\\dl_bt_sq",
     "cmd": "cmd.exe /c bt_sq_CopyCfg_ReStart.bat"
   },
+  "bt_sh": {
+    "dir": "D:\\dl_bt_sh",
+    "cmd": "cmd.exe /c bt_sh_CopyCfg_ReStart.bat"
+  },
   "jp_dev": {
     "dir": "D:\\svr\\dl_jp_dev",
     "cmd": "cmd.exe /c ReStart.bat"
