@@ -33,10 +33,10 @@ bool executeCommand(const TCHAR* command, const TCHAR* workingDirectory) {
 	// 创建进程
 	if (CreateProcess(NULL, commandCopy, NULL, NULL, FALSE, 0, NULL,
 		workingDirectory, &si, &pi)) {
-		// 等待进程结束
-		WaitForSingleObject(pi.hProcess, INFINITE);
+		// 等待进程结束 0.5秒后直接放弃等待
+		WaitForSingleObject(pi.hProcess, 500);
 
-		// 关闭进程和线程的句柄
+		// 关闭进程和线程的句柄 但是程序依旧运行
 		CloseHandle(pi.hProcess);
 		CloseHandle(pi.hThread);
 
