@@ -73,49 +73,6 @@ BOOST_AUTO_TEST_CASE(my_test3) {
 
 }
 
-BOOST_AUTO_TEST_CASE(my_test4) {
-	std::cout << "\n\n Test func CreateProcessA\n";
 
-#ifdef UNICODE
-#define tstring std::wstring
-#define tprintf wprintf
-#define Tcsdup wcsdup
-#else
-#define tstring std::string
-#define tprintf printf
-#define Tcsdup _strdup
-#endif
-	// 初始化STARTUPINFO和PROCESS_INFORMATION结构
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	ZeroMemory(&si, sizeof(si));
-	si.cb = sizeof(si);
-	ZeroMemory(&pi, sizeof(pi));
-	si.hStdOutput = NULL;
-
-	const char* command = "cout.bat>nul";
-	const char* workingDirectory = ".";
-	TCHAR* commandCopy = Tcsdup(command);
-
-	int kk = 3;
-	do 
-	{
-		if (CreateProcess(NULL, commandCopy, NULL, NULL, FALSE, 0, NULL,
-			workingDirectory, &si, &pi)) {
-			// 等待进程结束 1秒后直接放弃等待
-			WaitForSingleObject(pi.hProcess, 500);
-			// 关闭进程和线程的句柄 但是程序依旧运行
-			CloseHandle(pi.hProcess);
-			CloseHandle(pi.hThread);
-			//std::cout << "Command executed successfully.\n";
-		}
-		/*	else {
-				std::cout << "Failed to execute command.\n";
-			}
-		std::cout << kk << std::endl;*/
-	} while (kk--);
-
-
-}
 BOOST_AUTO_TEST_SUITE_END()
 

@@ -35,6 +35,7 @@ configure_file(cfg/listen_cmd_server_cfg.json ${CMAKE_BINARY_DIR}/listen_cmd_ser
 add_executable(Test2Any
     test/main.cpp
     test/unit_test.cpp
+    test/unit_test2.cpp
     src/threadForCout.cpp
     src/radixsort.cpp
 )

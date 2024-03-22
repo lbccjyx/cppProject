@@ -140,7 +140,6 @@ public:
 		a->over();
 		tPrint.join();
 		delete a;
-		system("pause");
 	}
 
 private:
