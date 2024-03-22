@@ -4,7 +4,7 @@
 #include <boost/test/unit_test.hpp>
 #include "threadForCout.h"
 #include "radixsort.h"
-
+#include <boost/progress.hpp>
 
 void TestPassArgsInFunction()
 {
@@ -54,7 +54,7 @@ BOOST_AUTO_TEST_CASE(my_test3) {
 	// 使用随机设备和分布生成随机数
 	std::random_device rd;
 	std::mt19937 gen(rd());
-	int a = 100001;
+	int a = INT32_MAX;
 	std::uniform_int_distribution<int> distribution(1, a);
 
 	// 将随机数插入到向量中
@@ -63,13 +63,91 @@ BOOST_AUTO_TEST_CASE(my_test3) {
 	}
 
 	std::vector<int> arrOut;
-	arrOut = RadixSort(arr);
 
-	std::cout << "Sorted array: ";
-	for (int num : arrOut) {
-		std::cout << num << " ";
+	// boost::progress_timer的{}内计时
+	{
+		boost::progress_timer tt;
+		arrOut = RadixSort(arr);
 	}
-	std::cout << std::endl;
+
+	//std::cout << "Sorted array: ";
+	//for (int num : arrOut) {
+	//	std::cout << num << " ";
+	//}
+	//std::cout << std::endl;
+
+}
+
+BOOST_AUTO_TEST_CASE(my_test4) {
+	std::cout << "\n\n Test func CreateProcessA\n";
+
+#ifdef UNICODE
+#define tstring std::wstring
+#define tprintf wprintf
+#define Tcsdup wcsdup
+#else
+#define tstring std::string
+#define tprintf printf
+#define Tcsdup _strdup
+#endif
+	// 初始化STARTUPINFO和PROCESS_INFORMATION结构
+	STARTUPINFO si;
+	PROCESS_INFORMATION pi;
+	ZeroMemory(&si, sizeof(si));
+	si.cb = sizeof(si);
+	ZeroMemory(&pi, sizeof(pi));
+	si.hStdOutput = NULL;
+
+	const char* command = "cout.bat>nul";
+	const char* workingDirectory = ".";
+	TCHAR* commandCopy = Tcsdup(command);
+
+	int kk = 3;
+	do
+	{
+		if (CreateProcess(NULL, commandCopy, NULL, NULL, FALSE, 0, NULL,
+			workingDirectory, &si, &pi)) {
+			// 等待进程结束 1秒后直接放弃等待
+			WaitForSingleObject(pi.hProcess, 500);
+			// 关闭进程和线程的句柄 但是程序依旧运行
+			CloseHandle(pi.hProcess);
+			CloseHandle(pi.hThread);
+			//std::cout << "Command executed successfully.\n";
+		}
+		/*	else {
+				std::cout << "Failed to execute command.\n";
+			}
+		std::cout << kk << std::endl;*/
+	} while (kk--);
+
+
+}
+
+BOOST_AUTO_TEST_CASE(my_test5)
+{
+	std::cout << "\n\n Test timer.hpp\n";
+
+	// boost::timer 用于计时 但是不如boost::progress_timer 方便 同时计时有上限
+	boost::timer t;
+	std::cout << "max timespan:" << t.elapsed_max() / 3600 << "h" << std::endl;
+	std::cout << "min timespan:" << t.elapsed_min() << "s" << std::endl;
+	std::cout << "now time elapsed:" << t.elapsed() << "s" << std::endl;
+
+}
+
+BOOST_AUTO_TEST_CASE(my_test6)
+{
+	std::cout << "\n\n test boost::scoped_ptr\n";
+	ThreadPrintManager ctpm;
+
+	XXPrint("66666666666a", 1, 2, 3, "x");
+	// 1: scoped_ptr 不允许拷贝, 赋值  无需delete  -也就是只能在声明的作用域内使用
+	boost::scoped_ptr<std::string> sp(new std::string("text"));
+	XXPrint("X thread:", *sp);
+
+	std::cout << "\n\n test boost::shared_ptr\n";
+	boost::shared_ptr<std::string> spStr(new std::string("share text"));
+	XXPrint("X thread:", *spStr);
 
 }
 
