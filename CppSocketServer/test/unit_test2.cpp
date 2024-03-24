@@ -11,7 +11,7 @@
 
 BOOST_AUTO_TEST_SUITE(tests_suit)
 
-BOOST_AUTO_TEST_CASE(my_test7)
+BOOST_AUTO_TEST_CASE(my_test6)
 {
 	std::cout << "\n\n test7 boost::scoped_ptr\n";
 	ThreadPrintManager ctpm;

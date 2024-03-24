@@ -33,28 +33,28 @@ public:
 	} data;
 
 public:
-	//AllStruct() {
-	//	std::cout << "Constructor\n";
-	//};
+	AllStruct() {
+		std::cout << "Constructor\n";
+	};
 
-	//~AllStruct() {
-	//	std::cout << "Destructor\n";
-	//}; 
+	~AllStruct() {
+		std::cout << "Destructor\n";
+	}; 
 
-	//AllStruct(const AllStruct& other) : data(other.data),nType(other.nType), bNeedDeleteFlag(other.bNeedDeleteFlag){
-	//	std::cout << "Copy Constructor\n";
-	//}
+	AllStruct(const AllStruct& other) : data(other.data),nType(other.nType), bNeedDeleteFlag(other.bNeedDeleteFlag){
+		std::cout << "Copy Constructor\n";
+	}
 
-	//AllStruct& operator=(AllStruct& allIn) {
+	AllStruct& operator=(AllStruct& allIn) {
 
-	//	std::cout << "Operator\n";
-	//	if (this != &allIn)
-	//	{
-	//		this->nType = allIn.nType;
-	//		this->data = allIn.data;
-	//	}
-	//	return *this;
-	//};
+		std::cout << "Operator\n";
+		if (this != &allIn)
+		{
+			this->nType = allIn.nType;
+			this->data = allIn.data;
+		}
+		return *this;
+	};
 };
 
 static std::mutex threadPrintMtx;
@@ -69,19 +69,20 @@ public:
 	threadPrint() { instance = this; };
 
 	template <typename T, typename... Types>
-	void NewPrint(const T& firstArg, const Types&... args)
+	void NewPrint(T&& firstArg, Types&&... args)
 	{
-		auto task = [this, firstArg]() {
-			DetailPrint<T>(firstArg);
-			};
+		auto task = [this, & firstArg]{
+			DetailPrint<T>(std::forward<T>(firstArg));
+		};
 		{
 			std::lock_guard<std::mutex> lock(threadPrintMtx);
 			threadPrintTasks.push(task);
+			threadPrintCv.notify_one();
 		}
-		threadPrintCv.notify_one();
 		// recursive   tuple
-		NewPrint(args...);
+		NewPrint(std::forward<Types>(args)...);
 	};
+
 	void NewPrint() {};
 	void worker() {
 		while (true) {
@@ -105,27 +106,28 @@ public:
 	}
 private:
 	template <typename T>
-	void DetailPrint(const T& arg)
+	void DetailPrint(T&& arg)
 	{
-		if constexpr (std::is_same<T, AllStruct>::value)
+		if constexpr (std::is_same<std::decay_t<T>, AllStruct>::value)
 		{
-			const AllStruct& allStruct = arg;
+			auto&& allStruct = std::forward<T>(arg);
 			switch (allStruct.nType)
 			{
 			case MSGACT_SENDAI:
-				SendaiCSBattleSignUpReportUpdate* p = allStruct.data.pSendai; 
+				SendaiCSBattleSignUpReportUpdate* p = allStruct.data.pSendai;
 				std::cout << "SendaiCSBattleSignUpReportUpdate: i = " << p->i << ", d = " << p->d << "\n";
-				if(allStruct.bNeedDeleteFlag)
+				if (allStruct.bNeedDeleteFlag)
 					delete p;
 			}
-			
+
 		}
 		else
 		{
 			// 其他类型的参数直接输出
-			std::cout << arg << "\n";
+			std::cout << std::forward<T>(arg) << "\n";
 		}
-	}
+	};
+
 };
 
 

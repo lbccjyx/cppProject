@@ -16,7 +16,7 @@ void TestPassArgsInFunction()
 	all.nType = MSGACT_SENDAI;
 	all.data.normalP = p;
 	all.bNeedDeleteFlag = true;
-	XXPrint("hehehhe", 3.1456544, all);
+	XXPrint("hehehhe", 3.1456544, std::move(all));
 }
 
 
@@ -134,23 +134,6 @@ BOOST_AUTO_TEST_CASE(my_test5)
 	std::cout << "now time elapsed:" << t.elapsed() << "s" << std::endl;
 
 }
-
-BOOST_AUTO_TEST_CASE(my_test6)
-{
-	std::cout << "\n\n test boost::scoped_ptr\n";
-	ThreadPrintManager ctpm;
-
-	XXPrint("66666666666a", 1, 2, 3, "x");
-	// 1: scoped_ptr 不允许拷贝, 赋值  无需delete  -也就是只能在声明的作用域内使用
-	boost::scoped_ptr<std::string> sp(new std::string("text"));
-	XXPrint("X thread:", *sp);
-
-	std::cout << "\n\n test boost::shared_ptr\n";
-	boost::shared_ptr<std::string> spStr(new std::string("share text"));
-	XXPrint("X thread:", *spStr);
-
-}
-
 
 BOOST_AUTO_TEST_SUITE_END()
 
