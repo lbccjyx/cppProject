@@ -71,15 +71,15 @@ public:
 	template <typename T, typename... Types>
 	void NewPrint(T&& firstArg, Types&&... args)
 	{
-		auto task = [this, & firstArg]{
-			DetailPrint<T>(std::forward<T>(firstArg));
-		};
+		auto task = [this, firstArg = std::forward<T>(firstArg)]() mutable {
+			DetailPrint(std::move(firstArg));
+			};
 		{
 			std::lock_guard<std::mutex> lock(threadPrintMtx);
 			threadPrintTasks.push(task);
 			threadPrintCv.notify_one();
 		}
-		// recursive   tuple
+		// recursive tuple
 		NewPrint(std::forward<Types>(args)...);
 	};
 
@@ -110,21 +110,24 @@ private:
 	{
 		if constexpr (std::is_same<std::decay_t<T>, AllStruct>::value)
 		{
-			auto&& allStruct = std::forward<T>(arg);
+			auto&& allStruct = std::forward<T&&>(arg);
 			switch (allStruct.nType)
 			{
 			case MSGACT_SENDAI:
+			{
 				SendaiCSBattleSignUpReportUpdate* p = allStruct.data.pSendai;
 				std::cout << "SendaiCSBattleSignUpReportUpdate: i = " << p->i << ", d = " << p->d << "\n";
 				if (allStruct.bNeedDeleteFlag)
 					delete p;
+				break;
+			}
 			}
 
 		}
 		else
 		{
 			// 其他类型的参数直接输出
-			std::cout << std::forward<T>(arg) << "\n";
+			std::cout << std::forward<T&&>(arg) << "\n";
 		}
 	};
 
@@ -149,6 +152,9 @@ private:
 	std::thread tPrint;
 };
 
+// std::forward：用于在模板函数中正确地转发参数。它可以将左值引用转发为左值引用，将右值引用转发为右值引用，同时保留参数的值类别（value category）。
+// std::move：用于将对象转换为右值引用，通常用于移动语义。移动语义允许将资源（如堆上分配的内存或文件句柄）从一个对象“移动”到另一个对象，而不是进行昂贵的拷贝操作。
+// 
+// 
 // threadPrint* MyThreadPrint = threadPrint::instance;
 #define XXPrint(...) threadPrint::instance->NewPrint(__VA_ARGS__)
-
