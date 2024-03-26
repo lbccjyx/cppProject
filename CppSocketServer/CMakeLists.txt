@@ -41,6 +41,12 @@ add_executable(Test2Any
     src/radixsort.cpp
 )
 
+# 添加factoryMode目录
+add_subdirectory(factoryMode)
+target_link_libraries(Test2Any FactoryMode)
+# 添加factoryMode为包含目录
+target_include_directories(Test2Any PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+
 target_link_libraries(Test2Any) # PRIVATE ${CMAKE_LIBRARY_PATH}
 target_include_directories(Test2Any PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(Test2Any PROPERTIES

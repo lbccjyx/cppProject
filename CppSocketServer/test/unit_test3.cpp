@@ -7,6 +7,8 @@
 #include <string>
 #include <vector>
 #include <boost/assign.hpp>
+#include "FactoryMode/Product.h"
+#include "factoryMode/Factory.h"
 
 BOOST_AUTO_TEST_SUITE(tests_suit)
 
@@ -31,5 +33,13 @@ BOOST_AUTO_TEST_CASE(my_test11)
 	}
 }
 
+BOOST_AUTO_TEST_CASE(my_test12)
+{
+	std::cout << "\n\n test12 \n";
+	Factory* pFac = new ConcreteFactory();
+	Product* pProd = pFac->CreateProduct();
+	delete pFac;
+	delete pProd;
+}
 
 BOOST_AUTO_TEST_SUITE_END()
