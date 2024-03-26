@@ -71,8 +71,9 @@ public:
 	template <typename T, typename... Types>
 	void NewPrint(T&& firstArg, Types&&... args)
 	{
-		auto task = [this, firstArg = std::forward<T>(firstArg)]() mutable {
-			DetailPrint(std::move(firstArg));
+		// 捕捉&firstArg 否则会导致拷贝构造
+		auto task = [this, &firstArg] {
+			DetailPrint(firstArg);
 			};
 		{
 			std::lock_guard<std::mutex> lock(threadPrintMtx);
@@ -122,7 +123,7 @@ private:
 				break;
 			}
 			}
-
+			delete &allStruct;
 		}
 		else
 		{

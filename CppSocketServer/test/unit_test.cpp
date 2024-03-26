@@ -12,11 +12,11 @@ void TestPassArgsInFunction()
 	p->d = 657;
 	p->i = 2;
 
-	AllStruct all;
-	all.nType = MSGACT_SENDAI;
-	all.data.normalP = p;
-	all.bNeedDeleteFlag = true;
-	XXPrint("hehehhe", 3.1456544, std::move(all));
+	AllStruct* pAll = new AllStruct;
+	pAll->nType = MSGACT_SENDAI;
+	pAll->data.normalP = p;
+	pAll->bNeedDeleteFlag = true;
+	XXPrint("hehehhe", 3.1456544, std::move(*pAll));
 }
 
 
@@ -30,11 +30,10 @@ BOOST_AUTO_TEST_CASE(my_test1) {
 	haha.d = 657;
 	haha.i = 2;
 
-	AllStruct all;
-	all.nType = MSGACT_SENDAI;
-	all.data.normalP = &haha;
-
-	XXPrint("hehehhe", 3.1456544, all);
+	AllStruct* pAll = new AllStruct;
+	pAll->nType = MSGACT_SENDAI;
+	pAll->data.normalP = &haha;
+	XXPrint("hehehhe", 3.1456544, std::move(*pAll));
 
 	// 由于等待线程结束后 haha 内存才会被释放 所以不会出现异常
 }
