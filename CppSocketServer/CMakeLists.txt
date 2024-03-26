@@ -36,6 +36,7 @@ add_executable(Test2Any
     test/main.cpp
     test/unit_test.cpp
     test/unit_test2.cpp
+    test/unit_test3.cpp
     src/threadForCout.cpp
     src/radixsort.cpp
 )
