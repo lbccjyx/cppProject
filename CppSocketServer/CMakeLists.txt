@@ -15,12 +15,13 @@ include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CppSocketServer)
 find_package(Boost REQUIRED)
 #find_package(nlohmann_json)  由于nlohmann_json本身没有库
+file(GLOB_RECURSE head ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+file(GLOB_RECURSE src ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+set(all_files ${head} ${src})
+
 add_executable(CppSocketServer 
     app/main.cpp 
-    src/fileinit.cpp
-    src/radixsort.cpp
-    src/socket.cpp
-    src/threadForCout.cpp
+    ${all_files}
 )
 
 target_link_libraries(CppSocketServer) #${CMAKE_LIBRARY_PATH}
@@ -32,13 +33,14 @@ set_target_properties(CppSocketServer PROPERTIES
 configure_file(cfg/listen_cmd_server_cfg.json ${CMAKE_BINARY_DIR}/listen_cmd_server_cfg.json COPYONLY)
 
 #######################################another one######################################
+
+file(GLOB_RECURSE head ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
+file(GLOB_RECURSE src ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
+file(GLOB_RECURSE src2 ${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp)
+set(all_files ${head} ${src} ${src2})
+
 add_executable(Test2Any
-    test/main.cpp
-    test/unit_test.cpp
-    test/unit_test2.cpp
-    test/unit_test3.cpp
-    src/threadForCout.cpp
-    src/radixsort.cpp
+    ${all_files}
 )
 
 # 添加factoryMode目录

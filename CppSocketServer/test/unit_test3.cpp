@@ -37,6 +37,7 @@ BOOST_AUTO_TEST_CASE(my_test12)
 {
 	std::cout << "\n\n test12 \n";
 	Factory* pFac = new ConcreteFactory();
+	//在这里 factoryMode 的好处是不需要知道ConcreteProduct的名字
 	Product* pProd = pFac->CreateProduct();
 	delete pFac;
 	delete pProd;

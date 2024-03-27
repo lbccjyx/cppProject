@@ -2,7 +2,7 @@
 
 
 Product::Product() {}
-Product::Product() {}
+Product::~Product() {}
 
 ConcreteProduct::ConcreteProduct()
 {
