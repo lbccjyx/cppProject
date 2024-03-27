@@ -56,6 +56,9 @@ target_link_libraries(Test2Any BuilderMode)
 add_subdirectory(ProtoTypeMode)
 target_link_libraries(Test2Any ProtoTypeMode)
 
+add_subdirectory(BridgeMode)
+target_link_libraries(Test2Any BridgeMode)
+
 target_include_directories(Test2Any PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(Test2Any PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(Test2Any PROPERTIES

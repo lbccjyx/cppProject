@@ -60,10 +60,13 @@ BOOST_AUTO_TEST_CASE(my_test14)
 {
 	std::cout << "\n\n test14 DirectorMode: Create Complex Object\n";
 	// BuildDirector 类里面有个基类指针  给指针赋值派生类 
-	BuildDirector* d = new BuildDirector( new ConcreteBuilderMode() );
+	ConcreteBuilderMode* pCB = new ConcreteBuilderMode();
+	BuildDirector* d = new BuildDirector(pCB);
 	// 一般来说：ConcreteBuilderMode 类应该初始化很复杂
 	d->Construct();
-
+	
+	delete d;
+	delete pCB;
 }
 
 
