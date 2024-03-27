@@ -10,6 +10,9 @@
 #include "FactoryMode/Product.h"
 #include "factoryMode/Factory.h"
 #include "Singleton/Singleton.h"
+#include "BuilderMode/BuilderDirector.h"
+#include "BuilderMode/BuilderMode.h"
+#include "BuilderMode/BuilderProduct.h"
 BOOST_AUTO_TEST_SUITE(tests_suit)
 
 BOOST_AUTO_TEST_CASE(my_test11)
@@ -47,7 +50,19 @@ BOOST_AUTO_TEST_CASE(my_test12)
 
 BOOST_AUTO_TEST_CASE(my_test13)
 {
-	std::cout << "\n\n test13 \n";
+	std::cout << "\n\n test13 SingletonMode: Create One Object\n";
 	Singleton* sgn = Singleton::instance();
 }
+
+BOOST_AUTO_TEST_CASE(my_test14)
+{
+	std::cout << "\n\n test14 DirectorMode: Create Complex Object\n";
+	// BuildDirector 类里面有个基类指针  给指针赋值派生类 
+	BuildDirector* d = new BuildDirector( new ConcreteBuilderMode() );
+	// 一般来说：ConcreteBuilderMode 类应该初始化很复杂
+	d->Construct();
+}
+
+
+
 BOOST_AUTO_TEST_SUITE_END()

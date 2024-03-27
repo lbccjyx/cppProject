@@ -50,6 +50,9 @@ target_link_libraries(Test2Any FactoryMode)
 add_subdirectory(Singleton)
 target_link_libraries(Test2Any Singleton)
 
+add_subdirectory(BuilderMode)
+target_link_libraries(Test2Any BuilderMode)
+
 # 添加factoryMode为包含目录
 target_include_directories(Test2Any PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
