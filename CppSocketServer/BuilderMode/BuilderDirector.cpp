@@ -7,7 +7,11 @@ BuildDirector::BuildDirector(BuilderMode* pBm)
 		_pBM = pBm;
 }
 
-BuildDirector::~BuildDirector() {};
+BuildDirector::~BuildDirector() {
+	if(_pBM)
+		delete _pBM;
+};
+
 void BuildDirector::Construct()
 {
 	if (!_pBM)

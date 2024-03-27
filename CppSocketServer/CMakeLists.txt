@@ -53,10 +53,10 @@ target_link_libraries(Test2Any Singleton)
 add_subdirectory(BuilderMode)
 target_link_libraries(Test2Any BuilderMode)
 
-# 添加factoryMode为包含目录
-target_include_directories(Test2Any PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
+add_subdirectory(ProtoTypeMode)
+target_link_libraries(Test2Any ProtoTypeMode)
 
-target_link_libraries(Test2Any) # PRIVATE ${CMAKE_LIBRARY_PATH}
+target_include_directories(Test2Any PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 target_include_directories(Test2Any PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(Test2Any PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_test
