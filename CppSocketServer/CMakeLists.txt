@@ -46,6 +46,10 @@ add_executable(Test2Any
 # 添加factoryMode目录
 add_subdirectory(factoryMode)
 target_link_libraries(Test2Any FactoryMode)
+
+add_subdirectory(Singleton)
+target_link_libraries(Test2Any Singleton)
+
 # 添加factoryMode为包含目录
 target_include_directories(Test2Any PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
 
