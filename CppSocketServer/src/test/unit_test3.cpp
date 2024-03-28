@@ -9,7 +9,7 @@
 #include <boost/assign.hpp>
 #include "FactoryMode/Product.h"
 #include "factoryMode/Factory.h"
-#include "Singleton/Singleton.h"
+#include "SingletonMode/Singleton.h"
 #include "BuilderMode/BuilderDirector.h"
 #include "BuilderMode/BuilderMode.h"
 #include "BuilderMode/BuilderProduct.h"
