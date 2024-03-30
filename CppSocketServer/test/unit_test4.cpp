@@ -8,7 +8,7 @@
 #include "BridgeMode/AbstractionImp.h"
 #include "BridgeMode/Abstraction.h"
 #include "AdapterMode/Adapter.h"
-//#include "DecoratorMode/Decorator.h"
+#include "DecoratorMode/Decorator.h"
 BOOST_AUTO_TEST_SUITE(tests_suit)
 
 BOOST_AUTO_TEST_CASE(my_test16)
@@ -27,5 +27,16 @@ BOOST_AUTO_TEST_CASE(my_test17)
 	// 如果Adaptee的方法无需传参 那么可以直接通过多继承 使用 实现继承
 	Target* pT2 = new Adapter();
 	pT2->Request();
+}
+
+BOOST_AUTO_TEST_CASE(my_test18)
+{
+	std::cout << "\n\n test18 Decoration Mode\n";
+	Component* pC = new ConcreteComponent();
+	Decorator* pD = new ConcreteDecorator(pC);
+	pD->Operation();
+	// 这样每要addBehavior的时候只要更改ConcreteDecorator
+	// ConcreteComponent::Operation
+	// ConcreteDecorator::AddedBehavior
 }
 BOOST_AUTO_TEST_SUITE_END()
