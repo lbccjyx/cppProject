@@ -9,6 +9,8 @@
 #include "BridgeMode/Abstraction.h"
 #include "AdapterMode/Adapter.h"
 #include "DecoratorMode/Decorator.h"
+#include "CompositeMode/Composite.h"
+#include "ProxyMode/Proxy.h"
 BOOST_AUTO_TEST_SUITE(tests_suit)
 
 BOOST_AUTO_TEST_CASE(my_test16)
@@ -38,5 +40,26 @@ BOOST_AUTO_TEST_CASE(my_test18)
 	// 这样每要addBehavior的时候只要更改ConcreteDecorator
 	// ConcreteComponent::Operation
 	// ConcreteDecorator::AddedBehavior
+}
+
+BOOST_AUTO_TEST_CASE(my_test19)
+{
+	std::cout << "\n\n test19 Composite Mode\n";
+	leaf* pL = new leaf();
+	pL->Operation();
+	Composite* pC = new Composite();
+	pC->Add(pL);
+	pC->Operation();
+	
+	ComponentB* pCB = pC->GetChild(0);
+	if(pCB)
+		pCB->Operation();
+}
+BOOST_AUTO_TEST_CASE(my_test20)
+{
+	std::cout << "\n\n test20 Composite Mode\n";
+	Subject* pS = new ConcreteSubject();
+	Proxy* pProxy = new Proxy(pS);
+	pProxy->Request();
 }
 BOOST_AUTO_TEST_SUITE_END()
