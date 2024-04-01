@@ -16,7 +16,7 @@ void TestPassArgsInFunction()
 	pAll->nType = MSGACT_SENDAI;
 	pAll->data.normalP = p;
 	pAll->bNeedDeleteFlag = true;
-	XXPrint("hehehhe", 3.1456544, std::move(*pAll));
+	XXXPrint("hehehhe", 3.1456544, std::move(*pAll));
 }
 
 
@@ -24,7 +24,7 @@ BOOST_AUTO_TEST_SUITE(tests_suit)
 
 BOOST_AUTO_TEST_CASE(my_test1) {
 	std::cout << "Test Passing Parameters to another thread in main \n";
-	ThreadPrintManager ctpm;
+	ThreadPrintManagerB ctpm;
 
 	SendaiCSBattleSignUpReportUpdate haha;
 	haha.d = 657;
@@ -33,14 +33,14 @@ BOOST_AUTO_TEST_CASE(my_test1) {
 	AllStruct* pAll = new AllStruct;
 	pAll->nType = MSGACT_SENDAI;
 	pAll->data.normalP = &haha;
-	XXPrint("hehehhe", 3.1456544, std::move(*pAll));
+	XXXPrint("hehehhe", 3.1456544, std::move(*pAll));
 
 	// 由于等待线程结束后 haha 内存才会被释放 所以不会出现异常
 }
 
 BOOST_AUTO_TEST_CASE(my_test2) {
 	std::cout << "\n\nTest Passing Parameters to another thread by Function\n";
-	ThreadPrintManager ctpm;
+	ThreadPrintManagerB ctpm;
 	// 由于存在堆栈中所以内存不会异常
 	TestPassArgsInFunction();
 }

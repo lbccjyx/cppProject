@@ -58,4 +58,10 @@ BOOST_AUTO_TEST_CASE(my_test23)
 	c1->Aciton();
 }
 
+// ²âÊÔÓÃÀı24
+BOOST_AUTO_TEST_CASE(my_test24)
+{
+	std::cout << "\n\n test24 RadixSort\n";
+
+}
 BOOST_AUTO_TEST_SUITE_END()

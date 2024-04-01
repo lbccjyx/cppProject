@@ -13,6 +13,14 @@ include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
 # 设置VS中的启动项目
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CppSocketServer)
 
+#如果是window则用"Visual Studio 17 2022"编译
+if(WIN32)
+    set(CMAKE_GENERATOR_PLATFORM "x64")
+    set(CMAKE_GENERATOR_TOOLSET "v142")
+    set(CMAKE_GENERATOR "Visual Studio 17 2022")
+endif()
+
+
 find_package(Boost REQUIRED)
 #find_package(nlohmann_json)  由于nlohmann_json本身没有库
 
