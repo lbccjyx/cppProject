@@ -95,7 +95,7 @@ public:
 			std::function<void()> task;
 			{
 				std::unique_lock<std::mutex> lock(threadPrintMtxB);
-				threadPrintCvB.wait(lock, [] { return !threadPrintTasksB.empty() || threadPrintDone; });
+				threadPrintCvB.wait(lock, [] { return !threadPrintTasksB.empty() || threadPrintDoneB; });
 				if (threadPrintDoneB && threadPrintTasksB.empty()) return;
 				task = std::move(threadPrintTasksB.front());
 				threadPrintTasksB.pop();
