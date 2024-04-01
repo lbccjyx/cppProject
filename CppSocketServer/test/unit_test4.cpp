@@ -57,7 +57,7 @@ BOOST_AUTO_TEST_CASE(my_test19)
 }
 BOOST_AUTO_TEST_CASE(my_test20)
 {
-	std::cout << "\n\n test20 Composite Mode\n";
+	std::cout << "\n\n test20 Proxy Mode\n";
 	Subject* pS = new ConcreteSubject();
 	Proxy* pProxy = new Proxy(pS);
 	pProxy->Request();
