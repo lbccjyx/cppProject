@@ -10,6 +10,31 @@
 #include "MediatorMode/Mediator.h"
 #include "MediatorMode/Colleage.h"
 
+typedef unsigned int	   U32;
+typedef int		  I32;
+typedef long long		  I64;
+
+//用于预防乘除超范围
+template<typename T, typename U>
+class myTemplateClass {
+public:
+	myTemplateClass(T a) :_a(a) {}
+
+	U operator*(T nx) {
+		if (nx <= 0)
+			return -2;
+
+		if (_a * nx < _a)
+		{
+
+			return -1;
+		}
+		return _a * nx;
+	}
+private:
+	T  _a;
+};
+
 BOOST_AUTO_TEST_SUITE(tests_suit)
 
 BOOST_AUTO_TEST_CASE(my_test21)
@@ -41,7 +66,7 @@ BOOST_AUTO_TEST_CASE(my_test23)
 {
 	std::cout << "\n\n test23 Mediator Mode\n";
 	ConcreteMediator* m = new ConcreteMediator();
-	ConcreteColleageA* c1 = new ConcreteColleageA(m); // 把ConcreteMediator 转为 Mediator
+	ConcreteColleageA* c1 = new ConcreteColleageA(m); // 把ConcreteMediator 转为 Mediator 并且在Colleage中保存Mediator的指针
 	ConcreteColleageB* c2 = new ConcreteColleageB(m);
 	m->IntroColleage(c1, c2);
 	c1->SetState("old");
@@ -56,12 +81,24 @@ BOOST_AUTO_TEST_CASE(my_test23)
 	c2->SetState("old");
 	c2->Aciton();
 	c1->Aciton();
+	delete m;
+	delete c1;
+	delete	c2;
 }
 
 // 测试用例24
 BOOST_AUTO_TEST_CASE(my_test24)
 {
-	std::cout << "\n\n test24 RadixSort\n";
+	std::cout << "\n\n test24 int超范围测试\n";
+
+	U32 u32A = 1861152495;
+	myTemplateClass<U32, I32> myTmpObj(u32A);
+	std::cout<<"myTmpObj * 30 = "<< myTmpObj * 30 << std::endl;
+
+	U32 x = u32A * 30;
+	I64 x1 = u32A * (I64)30;
+	std::cout << "x = " << x << std::endl;
+	std::cout << "x1 = " << x1 << std::endl;
 
 }
 BOOST_AUTO_TEST_SUITE_END()

@@ -14,41 +14,6 @@ using namespace std;
 #define Tcsdup _strdup
 #endif
 
-// 删除字符串后面的换行符
-static inline void removeTrailingNewline(std::string &s) {
-    s.erase(s.find_last_not_of("\n\r") + 1);
-}
-
-bool executeCommand(const TCHAR* command, const TCHAR* workingDirectory) {
-	// 初始化STARTUPINFO和PROCESS_INFORMATION结构
-	STARTUPINFO si;
-	PROCESS_INFORMATION pi;
-	ZeroMemory(&si, sizeof(si));
-	si.cb = sizeof(si);
-	ZeroMemory(&pi, sizeof(pi));
-	si.hStdOutput = NULL;
-
-	TCHAR* commandCopy = Tcsdup(command);
-
-	// 创建进程
-	if (CreateProcess(NULL, commandCopy, NULL, NULL, FALSE, 0, NULL,
-		workingDirectory, &si, &pi)) {
-		// 等待进程结束 0.5秒后直接放弃等待
-		WaitForSingleObject(pi.hProcess, 500);
-
-		// 关闭进程和线程的句柄 但是程序依旧运行
-		CloseHandle(pi.hProcess);
-		CloseHandle(pi.hThread);
-
-		XXPrint("Command executed successfully.\n");
-		return true;
-	}
-	else {
-		XXPrint("Failed to execute command.\n");
-		return false;
-	}
-}
-
 // 写一个类实现threadFunction的功能 有读取文件，重新读取配置文件，监听,answer等等
 class CThreadFunction {
 public:
@@ -75,10 +40,48 @@ public:
 		while (1) {
 			Socket* s = pIn->Accept();
 			std::thread t(&CThreadFunction::answer, this, s);
+			/*
+				t.detach() 是 C++11 中 std::thread 类的成员函数，用于将线程与 std::thread 对象分离，允许线程在后台运行而不会被主线程所管理。
+				这种分离允许子线程在后台独立运行，直到其自然结束，而不需要主线程等待其执行完毕。被分离的线程实例会自动释放其资源，无需显式地调用 join() 或 detach()。
+			*/
 			t.detach();
 		}
 	}
 private:
+	bool executeCommand(const TCHAR* command, const TCHAR* workingDirectory) {
+		// 初始化STARTUPINFO和PROCESS_INFORMATION结构
+		STARTUPINFO si;
+		PROCESS_INFORMATION pi;
+		ZeroMemory(&si, sizeof(si));
+		si.cb = sizeof(si);
+		ZeroMemory(&pi, sizeof(pi));
+		si.hStdOutput = NULL;
+
+		TCHAR* commandCopy = Tcsdup(command);
+
+		// 创建进程
+		if (CreateProcess(NULL, commandCopy, NULL, NULL, FALSE, 0, NULL,
+			workingDirectory, &si, &pi)) {
+			// 等待进程结束 0.5秒后直接放弃等待
+			WaitForSingleObject(pi.hProcess, 500);
+
+			// 关闭进程和线程的句柄 但是程序依旧运行
+			CloseHandle(pi.hProcess);
+			CloseHandle(pi.hThread);
+
+			XXPrint("Command executed successfully.\n");
+			return true;
+		}
+		else {
+			XXPrint("Failed to execute command.\n");
+			return false;
+		}
+	}
+
+	// 删除字符串后面的换行符
+	static inline void removeTrailingNewline(std::string& s) {
+		s.erase(s.find_last_not_of("\n\r") + 1);
+	}
 	bool readConfig() {
 		//初始化myCmdDataJson
 		myCmdDataJson.clear();
@@ -157,15 +160,15 @@ private:
 };
 
 int main(int argc, char* argv[]) {
-  init();
-  ThreadPrintManager ctpm;
+	init();
+	ThreadPrintManager ctpm;
 
-  //std::thread t(threadFunction);
-  // 多线程使用CThreadFunction 的listen
-  CThreadFunction ctf;
-  if (!ctf.init())
-	  return 0;
-  ctf.listen();
-  std::cout<<"main thread end"<<std::endl;
-  return 0;
+	//std::thread t(threadFunction);
+	// 多线程使用CThreadFunction 的listen
+	CThreadFunction ctf;
+	if (!ctf.init())
+		return 0;
+	ctf.listen();
+	std::cout<<"main thread end"<<std::endl;
+	return 0;
 }
