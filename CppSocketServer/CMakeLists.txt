@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 
 # 项目名称和语言
 project(CppSocketServer LANGUAGES CXX)
-set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD 23)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 # Include Conan

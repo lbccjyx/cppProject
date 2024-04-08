@@ -6,7 +6,7 @@ class ImguiOpencvDemo(ConanFile):
 
     generators = "CMakeToolchain"
     def configure(self):
-        self.settings.compiler.cppstd = "20"
+        self.settings.compiler.cppstd = "23"
 
     def requirements(self):
         self.requires("nlohmann_json/3.11.3")
