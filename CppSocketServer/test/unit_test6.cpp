@@ -152,7 +152,7 @@ BOOST_AUTO_TEST_CASE(my_test30)
 }
 
 
-#define MODULE_TIME_TYPE_DEF()                              \
+#define MODULE_TIME_TYPE_DEF                            \
 	MODULE_TIME_TYPE_ROW(MODULE_TIME_TYPE_CLOSE,   0    /*关闭*/)  \
 	MODULE_TIME_TYPE_ROW(MODULE_TIME_TYPE_OPEN,    1    /*永久开放*/ )   \
 	MODULE_TIME_TYPE_ROW(MODULE_TIME_TYPE_YYMMDD,  3  /*日期YYMMDD [begin,end] [自然天] [reopen_day有效]*/  ) \
@@ -161,20 +161,46 @@ BOOST_AUTO_TEST_CASE(my_test30)
 enum MODULE_TIME_TYPE : int
 {
 #define MODULE_TIME_TYPE_ROW(x1, x2, ...) x1 = x2,
-	MODULE_TIME_TYPE_DEF()
+	MODULE_TIME_TYPE_DEF
 #undef MODULE_TIME_TYPE_ROW
 };
 
 template <MODULE_TIME_TYPE e>
-inline bool IsTimeFormatValidIns(const INT64 beginFmt, const INT64 endFmt) requires( e == MODULE_TIME_TYPE_OPEN)
+inline bool IsTimeFormatValidIns(const INT64 beginFmt, const INT64 endFmt) requires(e == MODULE_TIME_TYPE_OPEN )
 {
 	return true;
+}
+
+template <MODULE_TIME_TYPE e>
+inline bool IsTimeFormatValidIns(const INT64 beginFmt, const INT64 endFmt) requires(e == MODULE_TIME_TYPE_CLOSE || e == MODULE_TIME_TYPE_YYMMDD)
+{
+	return true;
+}
+
+bool IsTimeFormatValid(const MODULE_TIME_TYPE eType, const INT64 beginFmt, const INT64 endFmt)
+{
+	switch (eType)
+	{
+#define MODULE_TIME_TYPE_ROW(x1, ...)                      \
+	case x1:                                               \
+		return IsTimeFormatValidIns<x1>(beginFmt, endFmt); \
+		break;
+
+
+		MODULE_TIME_TYPE_DEF	//如果报错 ,先确定是否定义 对应 [MODULE_TIME_TYPE]  IsTimeFormatValidIns 专用函数
+
+#undef MODULE_TIME_TYPE_ROW
+	default:
+		break;
+	};
+	return false;
 }
 
 BOOST_AUTO_TEST_CASE(my_test31)
 {
 	std::cout << "\n\n test 31\n";
 	std::cout<<IsTimeFormatValidIns<MODULE_TIME_TYPE_OPEN>(0, 0);
+	std::cout << IsTimeFormatValid(MODULE_TIME_TYPE_OPEN, 0, 0);
 }
 
 
