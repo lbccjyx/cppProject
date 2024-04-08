@@ -203,5 +203,136 @@ BOOST_AUTO_TEST_CASE(my_test31)
 	std::cout << IsTimeFormatValid(MODULE_TIME_TYPE_OPEN, 0, 0);
 }
 
+BOOST_AUTO_TEST_CASE(my_test32)
+{
+	std::cout << "\n\n test 32\n";
+
+	//预处理器运算符 # 用于在宏定义中进行字符串化 ## 粘合操作。
+#define STRINGIFY(x) #x
+#define CONCAT(x, y) x##y
+	const char* str = STRINGIFY(Hello);
+	std::cout << str << std::endl;
+	int xy = CONCAT(10, 20);
+	std::cout << xy << std::endl;
+}
+
+////////////////////////////my test 33 /////////////////
+template <int id>
+struct name_traits
+{
+	static const char* name()
+	{
+		return "";
+	}
+};
+
+#define DEF_LUA_INT(x)             \
+enum                           \
+{                              \
+	x = __LINE__ - id_start_xx \
+};                             \
+template <>                    \
+struct name_traits<x>          \
+{                              \
+	static const char* name()  \
+	{                          \
+		return #x;             \
+	}                          \
+};
+
+#define LUA_NAME(i) g_luaname[ i ]
+
+enum
+{
+	id_start_xx = __LINE__ + 1
+};
+DEF_LUA_INT(AAA)
+
+DEF_LUA_INT(BBB)
+enum
+{
+	LUA_DEF_LIMITED = __LINE__ - id_start_xx
+};
+constexpr int DEPTH_MAX = 500;
+static const char* g_luaname[LUA_DEF_LIMITED];
+
+template <size_t nBegin, size_t nEnd>
+struct LOOP_RANGE
+{
+	static void genname()
+	{
+		if constexpr (nBegin >= nEnd)
+		{
+			LOOP_RANGE<nBegin - 1, nEnd>::genname();
+			g_luaname[nBegin - 1] = name_traits<nBegin - 1>::name();
+			std::cout << "g_luaname["<< nBegin - 1 << "] = " << g_luaname[nBegin - 1] << std::endl;
+		}
+	}
+};
+
+template <size_t i>
+struct LOOP_DRIVE
+{
+	static void genname()
+	{
+		if constexpr (i > DEPTH_MAX)
+		{
+			LOOP_DRIVE<i - DEPTH_MAX - 1>::genname();
+			LOOP_RANGE<i, i - DEPTH_MAX>::genname();
+		}
+		else
+		{
+			LOOP_RANGE<i, 1>::genname();
+		}
+	}
+};
+
+class CLuaLogicMgr
+{
+public:
+
+	INT64 GetLuaInt(int nIndex)
+	{
+		if (nIndex < 0 || nIndex > LUA_DEF_LIMITED)
+		{
+			std::cout << "获得LUA脚本值失败,索引超出 \n";
+			return 0;
+		}
+		return m_LuaIntArray[nIndex];
+	}
+
+	bool Load_All_Lua_Int()
+	{
+		LOOP_DRIVE<LUA_DEF_LIMITED>::genname();
+		m_LuaIntArray.resize(LUA_DEF_LIMITED);
+
+		for (int i = 0; i < LUA_DEF_LIMITED; ++i)
+		{
+			const char* LuaName = LUA_NAME(i);
+
+			if (LuaName == NULL || (LuaName != NULL && strlen(LuaName) == 0))
+				continue;
+
+			m_LuaIntArray[i] = i;
+		}
+
+		return true;
+	}
+private:
+	std::vector<INT64> m_LuaIntArray;
+};
+
+BOOST_AUTO_TEST_CASE(my_test33)
+{
+	std::cout << "\n\n test 33\n";
+
+	std::cout<< id_start_xx << std::endl;
+	std::cout << LUA_DEF_LIMITED << std::endl;
+
+	CLuaLogicMgr mgr;
+	mgr.Load_All_Lua_Int();
+	std::cout <<"AAA:" << mgr.GetLuaInt(AAA) << std::endl;
+	std::cout << "BBB:" << mgr.GetLuaInt(BBB) << std::endl;
+}
 
 BOOST_AUTO_TEST_SUITE_END()
