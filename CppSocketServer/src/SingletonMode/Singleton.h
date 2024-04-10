@@ -13,4 +13,21 @@ private:
 };
 
 
+template <typename T>
+class TSingleton
+{
+public:
+	template <typename... Args>
+	static T* InstanceGet(Args&&... args)
+	{
+		static T s_objInstance = T(std::forward<Args>(args)...);
+		return &s_objInstance;
+	}
+
+private:
+	TSingleton(void) = default;
+	virtual ~TSingleton(void) = default;
+	TSingleton(const TSingleton&) = delete;
+	TSingleton& operator=(const TSingleton&) = delete;
+};
 #endif

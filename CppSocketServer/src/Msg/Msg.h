@@ -12,7 +12,11 @@
 	public:
 #endif
 const unsigned int _MAX_DEFAULT_RAW_MSGSIZE = 1024;	 //原始消息默认缓冲
-const int _MIN_MSGSIZE			   = 4;
+const int _MIN_MSGSIZE			   = 4; 
+#	define PURE_VIRTUAL_0 = 0;
+typedef unsigned int CID;
+
+
 struct MSG_HEAD
 {
 	unsigned short usSize;
@@ -49,6 +53,9 @@ class IMsg
 {
 public:
 	NO_COPY(IMsg);
+	virtual IMsg* Clone() const PURE_VIRTUAL_0;
+	virtual void SetFrom(CID val) PURE_VIRTUAL_0;
+	virtual void SetTo(CID val) PURE_VIRTUAL_0;
 
 protected:
 	virtual ~IMsg() = default;
@@ -69,8 +76,10 @@ public:
 public:
 	virtual bool Create(const void* pszBuf, unsigned short usBufLen);
 	virtual int GetMaxSize(void) const;
-	virtual char* GetBuf(void) const;
-
+	virtual char* GetBuf(void) const; 
+	virtual IMsg* Clone() const;
+	virtual void SetFrom(CID val);
+	virtual void SetTo(CID val);
 protected:
 	bool Init(int nMaxSize = 0);
 

@@ -90,3 +90,23 @@ char* CMsg::GetBuf(void) const
 {
 	return m_pBuf;
 }
+void CMsg::SetFrom(CID val)
+{
+	m_nFrom = val;
+}
+void CMsg::SetTo(CID val)
+{
+	m_nTo = val;
+}
+IMsg* CMsg::Clone() const
+{
+	CMsg* p = new CMsg();
+	if (!p)
+		return nullptr;
+	p->SetFrom(m_nFrom);
+	p->SetTo(m_nTo);
+	p->m_FromType = m_FromType;
+	assert(p->SetMaxSize(m_nMaxSize));
+	std::memcpy(p->GetBuf(), m_pBuf, GetMaxSize());
+	return p;
+}
