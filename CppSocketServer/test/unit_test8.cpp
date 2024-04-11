@@ -7,33 +7,6 @@
 #include <string>
 #include "Msg/Msg.h"
 BOOST_AUTO_TEST_SUITE(tests_suit)
-struct MSG_INFO
-{
-	USHORT usMsgSize;
-	USHORT usMsgType;
-
-	unsigned char ucAction;
-	PBYTE		  GetBufAddr()
-	{
-		// 首地址 + 头部大小 sizeof(MSG_INFO) = 6 * 1 byte
-		return (PBYTE)this + sizeof(MSG_INFO);
-	};
-};
-struct OrderQuery
-{
-	INT64 idUser;
-	int nAnther;
-};
-
-struct MSGCMD
-{
-	union
-	{
-		void* m_pPoint;
-		OrderQuery* m_pOrderQuery;
-	};
-	MSGCMD(void* pBuf = NULL): m_pPoint((void*)pBuf){}
-};
 
 bool OnRcvCMsg(const CMsg& rMsg)
 {

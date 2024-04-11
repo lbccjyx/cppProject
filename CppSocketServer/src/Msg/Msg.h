@@ -2,6 +2,7 @@
 #include <vector>
 #include <basetsd.h>
 #include <memory>
+#include <string>
 
 
 #ifndef NO_COPY
@@ -15,7 +16,8 @@ const unsigned int _MAX_DEFAULT_RAW_MSGSIZE = 1024;	 //原始消息默认缓冲
 const int _MIN_MSGSIZE			   = 4; 
 #	define PURE_VIRTUAL_0 = 0;
 typedef unsigned int CID;
-
+using USHORT = unsigned short;
+using PBYTE = unsigned char*;
 
 struct MSG_HEAD
 {
@@ -92,4 +94,36 @@ private:
 	int			 m_nTo = 0;
 	int			 m_nMaxSize = 0;
 	MSG_FROM_SVR m_FromType = MSG_FROM_NONE;
+};
+
+struct MSG_INFO
+{
+	USHORT usMsgSize;
+	USHORT usMsgType;
+
+	unsigned char ucAction;
+	PBYTE GetBufAddr()
+	{
+		// 首地址 + 头部大小 sizeof(MSG_INFO) = 6 * 1 byte
+		return (PBYTE)this + sizeof(MSG_INFO);
+	};
+};
+struct OrderQuery
+{
+	INT64 idUser;
+	int nAnther;
+};
+struct ProtoReq
+{
+	std::string strName;
+};
+struct MSGCMD
+{
+	union
+	{
+		void* m_pPoint;
+		OrderQuery* m_pOrderQuery;
+		ProtoReq* m_pProtoReq;
+	};
+	MSGCMD(void* pBuf = NULL) : m_pPoint((void*)pBuf) {}
 };
