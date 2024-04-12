@@ -23,7 +23,7 @@ class ICmdHandle
 public:
 	virtual ~ICmdHandle() = default;
 
-	virtual void Process(void* pObj, int c, const CMsg& m) = 0;
+	virtual void Process(void* pObj, const CMsg& m) = 0;
 };
 
 template <typename PacketType>
@@ -34,19 +34,16 @@ class UserOpcmdHandle : public ICmdHandle
 public:
 	UserOpcmdHandle(Callback cb, bool bCommRet = false) : _cb(std::move(cb)) , _bCommRet(bCommRet) {}
 
-	virtual void Process(void* pObj, int c, const CMsg& m) override
+	virtual void Process(void* pObj,const CMsg& m) override
 	{
 		CUser2* pUser = static_cast<CUser2*>(pObj);
 		assert(pUser);
 
-		std::cout << "简写了处理 没对类型进行处理"<< std::endl;
 		const void* pMsg = m.GetBuf();
 		MSG_INFO* pInfo = (MSG_INFO*)pMsg;
 		MSGCMD rPoint(pInfo->GetBufAddr());
 		PacketType* pProtoMsg = rPoint.m_pProtoReq;
-		std::cout << "函数请求参数是:" << rPoint.m_pProtoReq->strName << std::endl;
 
-		//msg.ParseFromString(m.GetData());
 		// 调用一个函数指针cb，传参是pUser 和 pProtoMsg，并将返回值赋给变量 e
 		MODULE_ERR e = std::invoke(_cb, *pUser, *pProtoMsg);
 		if (_bCommRet)
@@ -73,12 +70,13 @@ public:
 	{
 		const void* pMsg = rMsg.GetBuf();
 		const MSG_HEAD* pHead = (const MSG_HEAD*)pMsg;
+		// 通过pHead->usType 找到之前注册的nType对应函数
 		const auto e = pHead->usType;
 
 		auto* op = _handlers[e];
 		assert(op);
 		// 父类指针ICmdHandle 多态调用子类Process
-		op->Process(pObj, e, rMsg);
+		op->Process(pObj,rMsg);
 	};
 
 	~COpcmdsDispath() { this->Clear(); };
@@ -95,14 +93,14 @@ private:
 
 #define EntityOpcmdsDispath (*TSingleton<COpcmdsDispath>::InstanceGet())
 
-#define REG_ENTITYCMD_RET(cmd, packetType, ...)                     \
+#define REG_ENTITYCMD_RET(nType, packetType, ...)                     \
 	EntityOpcmdsDispath.Register( \
-		cmd,                                                         \
+		nType,                                                         \
 		new UserOpcmdHandle<packetType>(std::bind(__VA_ARGS__, std::placeholders::_1, std::placeholders::_2), true))
 
-static MODULE_ERR funcTestCallBack(CUser2&, ProtoReq&)
+static MODULE_ERR funcTestCallBack(CUser2&, ProtoReq& Req)
 {
-	std::cout << "funcTestCallBack" << std::endl;
+	std::cout << "funcTestCallBack 收到请求参数 "<< Req.strName << std::endl;
 	return MODERR_SUC;
 }
 
@@ -122,7 +120,7 @@ BOOST_AUTO_TEST_CASE(my_test38)
 	pHead->usMsgType = 1;
 	pHead->ucAction = 0;
 	std::cout << "函数请求类型是: " << pHead->usMsgType << std::endl;
-	pBody->strName = " test ";
+	strcpy(pBody->strName ,"hello world");
 	std::cout << "函数请求参数是: " << pBody->strName << std::endl;
 	CMsg msg;
 	msg.Create(msgBuf, pHead->usMsgSize);

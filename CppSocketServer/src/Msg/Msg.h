@@ -115,7 +115,7 @@ struct OrderQuery
 };
 struct ProtoReq
 {
-	std::string strName;
+	char strName[50];
 };
 struct MSGCMD
 {
