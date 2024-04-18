@@ -51,6 +51,12 @@ auto sum(auto a, auto b) { return a + b; }
 // 后置声明函数 C++14 可以自动推导函数返回类型 auto sumb(T1 a, T2 b)->decltype(a+b) { return a + b; }
 auto sumb(int a, int b)->int { return a + b; }
 
+// C++11标准的万能引用 -使用了引用折叠的规则
+template <class T>
+void bar(T&& t) {
+	// std::forward(t) 完美转发
+} 
+
 BOOST_AUTO_TEST_CASE(my_testA3) {
 	std::cout << " \n my_testA3 auto 规则 \n";
 	
@@ -72,7 +78,7 @@ BOOST_AUTO_TEST_CASE(my_testA3) {
 	auto&& jjj = 10;		// int      j -> int&&
 
 	// 数组或函数
-	int arri[2];
+	int arri[2]{0,1};  // C++ 11 开始 只要是非静态数据成员都可以直接用=或者{}初始化 ==> 默认初始化
 	auto arrm = arri;		// int*
 
 	// decltype(e) 推导规则
@@ -81,6 +87,12 @@ BOOST_AUTO_TEST_CASE(my_testA3) {
 	// 如果e是类型为T的右值，则推导结果为const T&&
 	// 会同步CV限定符
 	// 如果是成员变量，则推导结果无CV限定符
+
+	// 位域的默认初始化
+	struct A {
+		int a : 3 = 11;
+		int b : 2 {7};
+	};
 }
 
 BOOST_AUTO_TEST_SUITE_END()
