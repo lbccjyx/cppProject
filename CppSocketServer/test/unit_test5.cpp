@@ -14,7 +14,7 @@ typedef unsigned int	   U32;
 typedef int		  I32;
 typedef long long		  I64;
 
-//用于预防乘除超范围
+//用于预防乘除超范围   ----------------整形溢出---------------
 template<typename T, typename U>
 class myTemplateClass {
 public:
