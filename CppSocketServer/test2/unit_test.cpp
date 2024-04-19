@@ -57,6 +57,18 @@ void bar(T&& t) {
 	// std::forward(t) 完美转发
 } 
 
+class CommConstrutor {
+public:
+	// C++11 引入的委托构造函数  相当于构造函数调用构造函数
+	CommConstrutor(int a) :CommConstrutor(a, 0) {};
+	CommConstrutor(int a, double b): a_(a), b_(b) { CommonInit(); }
+
+private:
+	void CommonInit() {};
+	int a_;
+	double b_;
+};
+
 BOOST_AUTO_TEST_CASE(my_testA3) {
 	std::cout << " \n my_testA3 auto 规则 \n";
 	
@@ -79,6 +91,7 @@ BOOST_AUTO_TEST_CASE(my_testA3) {
 
 	// 数组或函数
 	int arri[2]{0,1};  // C++ 11 开始 只要是非静态数据成员都可以直接用=或者{}初始化 ==> 默认初始化
+
 	auto arrm = arri;		// int*
 
 	// decltype(e) 推导规则
@@ -93,6 +106,24 @@ BOOST_AUTO_TEST_CASE(my_testA3) {
 		int a : 3 = 11;
 		int b : 2 {7};
 	};
+
+	// 使用括号的初始化 叫 直接初始化
+	// 使用等号的初始化 叫 拷贝初始化(而不是拷贝运算符)
+	// C++11引入列表初始化 {} 拥有一个形参为 initializer_list<T> 的构造函数
+
+	// C++11 新增移动构造函数和移动赋值运算符 -> 类的特殊成员函数
+	// C++11 前, 如果定义了构造函数 那么不会生成默认的构造函数 C++11后可以通过 xxx() = default; 来生成默认构造函数
+	// C++20 三向比较  如果比较耗费很大的时候适用
+	std::strong_ordering res = 1 <=> 2;
+	if (res == std::strong_ordering::less) {
+		std::cout << "1 is less than 2" << std::endl;
+	}
+	else if (res == std::strong_ordering::equal) {
+		std::cout << "1 is equal to 2" << std::endl;
+	}
+	else {
+		std::cout << "1 is greater than 2" << std::endl;
+	}
 }
 
 BOOST_AUTO_TEST_SUITE_END()
