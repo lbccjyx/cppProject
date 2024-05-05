@@ -124,6 +124,11 @@ BOOST_AUTO_TEST_CASE(my_testA3) {
 	else {
 		std::cout << "1 is greater than 2" << std::endl;
 	}
+	//C++17开始 lambda 会隐式声明为常量表达式 constexpr lambdas  而常量表达式的作用是编译期确定结果 -比如结果用于定义数组大小中。
+
+	//C++11的原生字面量 R"()"
+	std::string strA = R"(((((((\r\n)";
+	std::cout << "strA:" << strA << std::endl;
 }
 
 BOOST_AUTO_TEST_SUITE_END()
