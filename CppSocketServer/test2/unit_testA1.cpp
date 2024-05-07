@@ -63,6 +63,7 @@ BOOST_AUTO_TEST_CASE(my_testA4) {
 // 6 身高排序 
 // 题目0007-单词反转 
 // 题目0010-数据分类
+// 最小步骤数
 
 
 
@@ -206,5 +207,8 @@ BOOST_AUTO_TEST_CASE(my_testA8) {
 	// 输出结果
 	cout << "在字符串2中找到的字符串1中的字符并按ASCII码值排序为: " << unique_chars << endl;
 }
+
+
+
 BOOST_AUTO_TEST_SUITE_END()
 
