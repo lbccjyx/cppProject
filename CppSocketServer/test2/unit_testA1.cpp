@@ -208,6 +208,11 @@ BOOST_AUTO_TEST_CASE(my_testA8) {
 	cout << "在字符串2中找到的字符串1中的字符并按ASCII码值排序为: " << unique_chars << endl;
 }
 
+BOOST_AUTO_TEST_CASE(my_testA9) {
+	std::cout << "\n\n    \n";
+	// hash表内存。  多态基类指针。  设计一个惊喜礼包模式（事件注册监听）。 
+}
+
 
 
 BOOST_AUTO_TEST_SUITE_END()
