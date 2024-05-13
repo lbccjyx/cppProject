@@ -303,6 +303,8 @@ BOOST_AUTO_TEST_CASE(my_testA10) {
 		};
 	CompareFunc(strArr[0], strArr[1]);
 }
+// hash表内存。  多态基类指针。  设计一个惊喜礼包模式（事件注册监听）。 
+
 
 BOOST_AUTO_TEST_SUITE_END()
 
