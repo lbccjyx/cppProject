@@ -208,7 +208,101 @@ BOOST_AUTO_TEST_CASE(my_testA8) {
 	cout << "在字符串2中找到的字符串1中的字符并按ASCII码值排序为: " << unique_chars << endl;
 }
 
+static int nArr[] = { 7, 5, 9, 4, 2, 6, 8, 3, 5, 4, 3, 9};
+static int nArrLen = sizeof(nArr) / sizeof(nArr[0]);
+int nStep = 0;
+int StepNext(int nCurPos, int nNextPos)
+{
+	int nNextStep = nArr[nCurPos];
+	if (nNextPos == nArrLen - 1)
+	{
+		return nStep;
+	}
+	else if (nNextPos < nArrLen - 1)
+	{
+		nStep++;
+		return StepNext(nNextPos, nNextPos + nNextStep);
+	}
+	else
+	{
+		return -1;
+	}
+}
 
+BOOST_AUTO_TEST_CASE(my_testA9) {
+	std::cout << "\n\n10:求从第一个成员开始正好走到数组最后一个成员所使用的最小步骤数 \n";
+	/*
+要求：
+
+第一步，必须从第一元素起，且1 <= 第一步步长 < len / 2 (len为数组长度)
+从第二步开始只能以所在成员的数字走相应的步数，不能多不能少，如果目标不可达返回-1，只输出最小的步骤数量
+只能向数组的尾部走不能向回走
+	*/
+	for (int i = 0; i < nArrLen / 2; i++)
+	{
+		nStep = 1;
+		std::cout<<StepNext( i, i)<<"\t";
+	}
+
+}
+
+
+BOOST_AUTO_TEST_CASE(my_testA10) {
+
+	std::cout << "\n\n11:磁盘排序 \n";
+	/*
+磁盘的容量单位常用的有M、G、T
+他们之间的换算关系为1T =1024G，1G=1024M
+现在给定n块磁盘的容量，请对他们按从小到大的顺序进行稳定排序
+	*/
+	std::string strArr[] = { "1T", "20M", "3G", "10G6T", "3M12G9M"};
+
+	auto pureCaculateSize = [](const char* str, int nLen)
+		{
+			int nNum = 0;
+			for (int i = 0; i<nLen; i++) {
+				char ch = str[i];
+				if (std::isdigit(ch))
+				{
+					nNum = nNum * 10 + ch - '0';
+				}
+				else if (ch == 'G')
+				{
+					nNum = nNum * 1024;
+				}
+				else if (ch == 'T')
+				{
+					nNum = nNum * 1024 * 1024;
+				}
+			}
+		};
+
+	auto funcSeparate = [](std::string& str)
+		{
+			for (int i = 0; i < str.length(); i++) {
+				if (std::isalpha(str[i]))
+				{
+					// 截取前i个到strTmp
+					std::string strTmp = str.substr(0, i + 1);
+					std::cout << "strTmp" << strTmp << std::endl;
+					// 删除strTmpA的前i个字符
+					str = str.substr(i + 1);
+					break;
+				}
+			}
+		};
+
+	auto CompareFunc = [](const std::string& strA, const std::string& strB)
+		{
+			std::string strTmpA = strA;
+			std::string strTmpB = strB;
+			INT64 nA = 0, nB = 0;
+
+
+			
+		};
+	CompareFunc(strArr[0], strArr[1]);
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 
