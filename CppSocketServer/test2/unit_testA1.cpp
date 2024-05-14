@@ -118,7 +118,9 @@ BOOST_AUTO_TEST_CASE(my_testA6) {
 	cout<<"执行完所有任务需要"<<nTime<<"秒" << endl;
 }
 
-
+// 参数1 数组 
+// 参数2 最大资金
+// 参数3 选取的商品数量
 pair<int, vector<int>> getMaxSum(vector<int>& arrCost, int nMoney, int selectCount) {
 	int n = arrCost.size();
 
@@ -255,9 +257,8 @@ BOOST_AUTO_TEST_CASE(my_testA10) {
 他们之间的换算关系为1T =1024G，1G=1024M
 现在给定n块磁盘的容量，请对他们按从小到大的顺序进行稳定排序
 	*/
-	std::string strArr[] = { "1T", "20M", "3G", "10G6T", "3M12G9M"};
-
-	auto pureCaculateSize = [](const char* str, int nLen)
+	std::string strArr[] = { "1T4M1T4M", "20M", "3G", "10G6T", "3M12G9M"};
+	auto pureCaculateSize = [](const char* str, int nLen)->INT64
 		{
 			int nNum = 0;
 			for (int i = 0; i<nLen; i++) {
@@ -275,36 +276,195 @@ BOOST_AUTO_TEST_CASE(my_testA10) {
 					nNum = nNum * 1024 * 1024;
 				}
 			}
+			return nNum;
 		};
-
-	auto funcSeparate = [](std::string& str)
+	auto funcSeparateAndGetNum = [&](std::string& str)->INT64
 		{
-			for (int i = 0; i < str.length(); i++) {
-				if (std::isalpha(str[i]))
-				{
-					// 截取前i个到strTmp
-					std::string strTmp = str.substr(0, i + 1);
-					std::cout << "strTmp" << strTmp << std::endl;
-					// 删除strTmpA的前i个字符
-					str = str.substr(i + 1);
-					break;
+			INT64 nNum = 0;
+			while (!str.empty())
+			{
+				for (int i = 0; i < str.length(); i++) {
+					if (std::isalpha(str[i]))
+					{
+						// 截取前i个到strTmp
+						std::string strTmp = str.substr(0, i + 1);
+						nNum += pureCaculateSize(strTmp.c_str(), strTmp.length());
+						// 删除strTmpA的前i个字符
+						str = str.substr(i + 1);
+						break;
+					}
 				}
 			}
+			return nNum;
 		};
-
-	auto CompareFunc = [](const std::string& strA, const std::string& strB)
+	auto CompareFunc = [&](const std::string& strA, const std::string& strB)
 		{
 			std::string strTmpA = strA;
 			std::string strTmpB = strB;
 			INT64 nA = 0, nB = 0;
-
-
-			
+			return (funcSeparateAndGetNum(strTmpA) < funcSeparateAndGetNum(strTmpB));
 		};
 	CompareFunc(strArr[0], strArr[1]);
+	std::sort(strArr, strArr + 5, CompareFunc);
+	for(auto str : strArr)
+		std::cout << str << std::endl;
 }
-// hash表内存。  多态基类指针。  设计一个惊喜礼包模式（事件注册监听）。 
 
+std::pair<int, int> minAbsSumPair(std::vector<int>& nums) {
+	// 先将数组排序
+	std::sort(nums.begin(), nums.end());
+
+	int minAbsSum = INT_MAX; // 初始最小绝对值
+	std::pair<int, int> minPair; // 记录最小绝对值对应的两个数
+
+	// 双指针
+	int left = 0;
+	int right = nums.size() - 1;
+
+	while (left < right) {
+		int sum = nums[left] + nums[right];
+		int absSum = std::abs(sum); // 当前和的绝对值
+
+		// 如果当前绝对值更小，则更新最小绝对值和对应的两个数
+		if (absSum < minAbsSum) {
+			minAbsSum = absSum;
+			minPair = { nums[left], nums[right] };
+		}
+
+		// 根据当前和的正负移动指针
+		if (sum < 0) {
+			left++;
+		}
+		else if (sum > 0) {
+			right--;
+		}
+		else {
+			// 如果和为零，直接返回
+			return minPair;
+		}
+	}
+
+	return minPair;
+}
+BOOST_AUTO_TEST_CASE(my_testA11) {
+	std::cout << "\n\n12:乱序整数序列两数之和绝对值最小 \n";
+	std::vector<int> nums{ -1, -3, 7 ,5 ,11 ,15 };
+	auto pairA = minAbsSumPair(nums);
+	std::cout << "两数之和绝对值最小的数对为: " << pairA.first << " " << pairA.second << std::endl;
+}
+
+
+BOOST_AUTO_TEST_CASE(my_testA12) {
+	std::cout << "\n\n13:最少颜色 \n";
+	/*
+同种颜色的所有数都可以被这个颜色中最小的那个数整除， 算算最少需要多少种颜色
+	*/
+	std::vector<int> nums{2, 3, 4, 7, 8, 9};
+	std::vector<int> smallNums;
+
+	for (int i = 0; i < nums.size(); i++)
+	{
+		if(smallNums.empty())
+		{
+			smallNums.push_back(nums[i]);
+			continue;
+		}
+
+		int found = 0;
+		for (int j : smallNums)
+		{
+			// 判断能否被j整除
+			if ( nums[i] % j == 0)
+			{
+				found = 1;
+				break;
+			}
+		}
+		if(!found)
+			smallNums.push_back(nums[i]);
+	}
+
+	for (int j : smallNums)
+	{
+		std::cout << j << " ";
+	}
+}
+
+
+BOOST_AUTO_TEST_CASE(my_testA13) {
+	
+	std::cout << "\n\n14:输入法提示词 \n";
+	std::string str[] = { "hello", "furthest ", "front ", "abcd", "abcde" };
+
+	std::string prefix = "f";
+
+	//遍历蛮没有性能的 可能用hash表
+	for (auto s : str)
+	{
+		if(s.starts_with(prefix))
+			std::cout << s << std::endl;
+	}
+
+	std::unordered_map<char, std::list<std::string>> hashTable;
+	for (auto s : str) {
+		hashTable[s[0]].push_back(s);
+	}
+	// 查找
+	char prefixFirstChar = prefix[0];
+	auto it = hashTable.find(prefixFirstChar);
+	if (it != hashTable.end()) {
+		for (auto s : it->second) {
+			if (s.starts_with(prefix))
+				std::cout << s << std::endl;
+		}
+	}
+}
+
+void printConsecutiveSum(int start, int end) {
+	for (int i = start; i < end; ++i) {
+		std::cout << i;
+		if (i < end - 1) {
+			std::cout << " + ";
+		}
+	}
+	std::cout << std::endl;
+}
+int countAndPrintConsecutiveSum(int target) {
+	int count = 0;
+	int start = 1, end = 1;
+	int sum = 0;
+	// sum 没超过就加后面的 sum 超过就减前面的
+	while (start <= target / 2) {
+		if (sum < target) {
+			sum += end;
+			end++;
+		}
+		else if (sum > target) {
+			sum -= start;
+			start++;
+		}
+		else {
+			count++;
+			printConsecutiveSum(start, end);
+			sum -= start;
+			start++;
+		}
+	}
+
+	return count;
+}
+
+BOOST_AUTO_TEST_CASE(my_testA14) {
+
+	std::cout << "\n\n15:整数分解 \n";
+	/*
+一个整数可以由连续的自然数之和来表示。
+给定一个整数，计算该整数有几种连续自然数之和的表达式，
+	*/
+	int target = 4;
+	int result = countAndPrintConsecutiveSum(target);
+	std::cout << "Number of expressions for " << target << ": " << result << std::endl;
+}
 
 BOOST_AUTO_TEST_SUITE_END()
 
