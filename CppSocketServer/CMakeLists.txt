@@ -6,9 +6,11 @@ cmake_minimum_required(VERSION 3.5 FATAL_ERROR)
 project(CppSocketServer LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 23)
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/include)
+include_directories(${Boost_INCLUDE_DIRS})
 
 # Include Conan
 include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
+include(${CMAKE_BINARY_DIR}/*)
 
 # 设置VS中的启动项目
 set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CppSocketServer)
@@ -21,10 +23,6 @@ if(WIN32)
 endif()
 
 find_package(Boost REQUIRED)
-#find_package(Boost REQUIRED COMPONENTS thread system)
-#find_package(Boost REQUIRED)
-#find_package(websocketpp)  由于websocketpp本身没有库
-#find_package(nlohmann_json)  由于nlohmann_json本身没有库
 
 file(GLOB_RECURSE head ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
 file(GLOB_RECURSE head2 ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)

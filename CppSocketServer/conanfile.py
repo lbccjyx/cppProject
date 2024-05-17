@@ -7,10 +7,10 @@ class ImguiOpencvDemo(ConanFile):
     generators = "CMakeToolchain"
     def configure(self):
         self.settings.compiler.cppstd = "23"
+        self.settings.compiler.runtime_type = "Debug"
 
     def requirements(self):
         self.requires("nlohmann_json/3.11.3")
-        self.requires("openssl/3.2.1")
         self.requires("boost/1.83.0")
         self.requires("websocketpp/0.8.2")
         
