@@ -10,7 +10,9 @@ class ImguiOpencvDemo(ConanFile):
 
     def requirements(self):
         self.requires("nlohmann_json/3.11.3")
-        self.requires("boost/1.76.0")
+        self.requires("openssl/3.2.1")
+        self.requires("boost/1.83.0")
+        self.requires("websocketpp/0.8.2")
         
     def build(self):
         cmake = CMake(self)

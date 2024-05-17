@@ -12,9 +12,17 @@ call .\.venv\Scripts\activate
 python.exe -m pip install --upgrade pip
 @REM 虚拟环境安装conan
 pip install conan
-@REM conan默认配置文件
-conan profile detect
-conan install . --output-folder=build --build=missing
+echo [settings] > C:\.conan\profiles\whmProfile
+echo arch=x86_64 >> C:\.conan\profiles\whmProfile
+echo build_type=Debug >> C:\.conan\profiles\whmProfile
+echo os=Windows >> C:\.conan\profiles\whmProfile
+echo compiler=msvc >> C:\.conan\profiles\whmProfile
+echo compiler.cppstd=23 >> C:\.conan\profiles\whmProfile
+echo compiler.runtime=dynamic >> C:\.conan\profiles\whmProfile
+echo compiler.version=193 >> C:\.conan\profiles\whmProfile
+echo compiler.runtime_type=Debug >> C:\.conan\profiles\whmProfile
+
+conan install . --output-folder=build --build=missing --profile=whmProfile
 cd build
 @REM CMAKE_TOOLCHAIN_FILE 的主要作用是定义和配置工具链	 								
 @REM 																	  CMAKE_PREFIX_PATH是要编译的文件所在的安装路径

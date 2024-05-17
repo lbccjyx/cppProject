@@ -20,8 +20,10 @@ if(WIN32)
     set(CMAKE_GENERATOR "Visual Studio 17 2022")
 endif()
 
-
 find_package(Boost REQUIRED)
+#find_package(Boost REQUIRED COMPONENTS thread system)
+#find_package(Boost REQUIRED)
+#find_package(websocketpp)  由于websocketpp本身没有库
 #find_package(nlohmann_json)  由于nlohmann_json本身没有库
 
 file(GLOB_RECURSE head ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
@@ -34,7 +36,7 @@ add_executable(CppSocketServer
     ${all_files}
 )
 
-target_link_libraries(CppSocketServer) #${CMAKE_LIBRARY_PATH}
+target_link_libraries(CppSocketServer) #${CMAKE_LIBRARY_PATH}  PRIVATE Boost::thread Boost::system
 target_include_directories(CppSocketServer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
 target_include_directories(CppSocketServer PRIVATE ${CMAKE_INCLUDE_PATH})
 set_target_properties(CppSocketServer PROPERTIES
@@ -44,15 +46,35 @@ set_target_properties(CppSocketServer PROPERTIES
 # 把cfg文件复制到相关位置 代码中就无需绝对路径或者相对路径
 configure_file(cfg/listen_cmd_server_cfg.json ${CMAKE_BINARY_DIR}/listen_cmd_server_cfg.json COPYONLY)
 
+#######################################WebSocketServer######################################
+add_executable(CppWebSocketServer
+    app/WebSocketMain.cpp 
+    ${all_files}
+)
+
+target_link_libraries(CppWebSocketServer  PRIVATE ${Boost_LIBRARIES}) #${CMAKE_LIBRARY_PATH}   PRIVATE Boost::thread Boost::system
+target_include_directories(CppWebSocketServer PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(CppWebSocketServer PRIVATE ${CMAKE_INCLUDE_PATH})
+set_target_properties(CppWebSocketServer PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/websocket
+)
+#######################################WebSocketClient######################################
+add_executable(CppWebSocketClient
+    app/WebSocketClient.cpp 
+    ${all_files}
+)
+
+target_link_libraries(CppWebSocketClient  PRIVATE ${Boost_LIBRARIES}) #${CMAKE_LIBRARY_PATH}
+target_include_directories(CppWebSocketClient PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
+target_include_directories(CppWebSocketClient PRIVATE ${CMAKE_INCLUDE_PATH})
+set_target_properties(CppWebSocketClient PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/websocket
+)
 #######################################another one######################################
-
-file(GLOB_RECURSE head ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
-file(GLOB_RECURSE head2 ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
-file(GLOB_RECURSE src ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 file(GLOB_RECURSE src2 ${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp)
-set(all_files ${head} ${head2} ${src} ${src2})
+set(all_files_2 ${head} ${head2} ${src} ${src2})
 
-foreach(file ${all_files})
+foreach(file ${all_files_2})
     file(RELATIVE_PATH relative_file ${CMAKE_CURRENT_SOURCE_DIR} ${file})
     string(REGEX REPLACE "(.*)(/[^/]*)$" "\\1" relative_group ${relative_file})
     string(REPLACE "/" "\\" relative_group ${relative_group})
@@ -60,7 +82,7 @@ foreach(file ${all_files})
 endforeach()
 
 add_executable(Test1Any
-    ${all_files}
+    ${all_files_2}
 )
 
 target_include_directories(Test1Any PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
@@ -73,13 +95,10 @@ configure_file(cfg/cout.bat ${CMAKE_BINARY_DIR}/bin_test/Debug/cout.bat COPYONLY
 
 #######################################another one######################################
 
-file(GLOB_RECURSE head ${CMAKE_CURRENT_SOURCE_DIR}/src/*.h)
-file(GLOB_RECURSE head2 ${CMAKE_CURRENT_SOURCE_DIR}/include/*.h)
-file(GLOB_RECURSE src ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
-file(GLOB_RECURSE src2 ${CMAKE_CURRENT_SOURCE_DIR}/test2/*.cpp)
-set(all_files ${head} ${head2} ${src} ${src2})
+file(GLOB_RECURSE src3 ${CMAKE_CURRENT_SOURCE_DIR}/test2/*.cpp)
+set(all_files_3 ${head} ${head2} ${src} ${src3})
 
-foreach(file ${all_files})
+foreach(file ${all_files_3})
     file(RELATIVE_PATH relative_file ${CMAKE_CURRENT_SOURCE_DIR} ${file})
     string(REGEX REPLACE "(.*)(/[^/]*)$" "\\1" relative_group ${relative_file})
     string(REPLACE "/" "\\" relative_group ${relative_group})
@@ -87,7 +106,7 @@ foreach(file ${all_files})
 endforeach()
 
 add_executable(Test2Any
-    ${all_files}
+    ${all_files_3}
 )
 
 target_include_directories(Test2Any PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/src)
