@@ -3,8 +3,8 @@ from conan.tools.cmake import CMake
 
 class ImguiOpencvDemo(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
-
     generators = "CMakeToolchain"
+
     def configure(self):
         self.settings.compiler.cppstd = "23"
         self.settings.compiler.runtime_type = "Debug"
@@ -20,4 +20,4 @@ class ImguiOpencvDemo(ConanFile):
         cmake.build()
 
     def build_requirements(self):
-        self.tool_requires("cmake/3.25.3")
+        self.tool_requires("cmake/3.27.4")

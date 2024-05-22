@@ -1,4 +1,5 @@
 #include <iostream>
+#define BOOST_TIMER_ENABLE_DEPRECATED
 #include <fstream>
 #include <iomanip>
 #include <chrono>
