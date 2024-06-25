@@ -62,6 +62,37 @@ set_target_properties(CppWebSocketServer PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/websocket
 )
 configure_file(cfg/config.txt ${CMAKE_BINARY_DIR}/config.txt COPYONLY)
+
+
+#######################################SFML######################################
+# Find SFML package
+find_package(SFML)
+
+# Add executable target
+add_executable(CppSFML
+    app/MainSFML.cpp 
+    ${all_files}
+)
+
+# Include directories
+target_include_directories(CppSFML 
+    PUBLIC 
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
+    ${CMAKE_INCLUDE_PATH}
+)
+
+# Link libraries
+target_link_libraries(CppSFML 
+    ${Boost_LIBRARIES}
+    sfml-graphics sfml-window sfml-system
+)
+
+# Set target properties
+set_target_properties(CppSFML PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/cppsfml
+)
+
+
 #######################################another one######################################
 file(GLOB_RECURSE src2 ${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp)
 set(all_files_2 ${head} ${src} ${src2})
