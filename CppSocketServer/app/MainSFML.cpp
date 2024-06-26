@@ -42,6 +42,7 @@ int main()
 						if (shape->contains(mousePos))
 						{
 							isDragging = true;
+							shape->startDragging();
 							offset = shape->getPosition() - mousePos;
 							draggedShape = shape.get();
 							break;
@@ -54,6 +55,10 @@ int main()
 			{
 				if (event.mouseButton.button == sf::Mouse::Left)
 				{
+					for (auto& shape : shapes)
+					{
+						shape->stopDragging();
+					}
 					isDragging = false;
 					draggedShape = nullptr;
 				}

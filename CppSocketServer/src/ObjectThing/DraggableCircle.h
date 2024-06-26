@@ -42,6 +42,10 @@ public:
 
 	void update(float deltaTime) override
 	{
+		if (isDragging)
+		{
+			return;
+		}
 		// Apply gravity   v=u+at
 		if (circle.getPosition().y + circle.getRadius() < GROUND_HEIGHT)
 		{

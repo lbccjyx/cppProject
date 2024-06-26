@@ -23,12 +23,10 @@ public:
 
 	void setPosition(const sf::Vector2f& position)
 	{
-		this->startDragging();
 		sf::Vector2f offset = position - leftCircle.getPosition();
 		leftCircle.setPosition(position);
 		rightCircle.setPosition(leftCircle.getPosition() + sf::Vector2f(length, 0));
 		connector.setPosition((leftCircle.getPosition() + rightCircle.getPosition()) / 2.0f);
-		this->stopDragging();
 	}
 
 	sf::Vector2f getPosition() const
@@ -105,15 +103,7 @@ public:
 		connector.setRotation(angle * 180.0f / 3.14159265f);
 	}
 
-	void startDragging()
-	{
-		isDragging = true;
-	}
 
-	void stopDragging()
-	{
-		isDragging = false;
-	}
 
 private:
 	DraggableCircle leftCircle;

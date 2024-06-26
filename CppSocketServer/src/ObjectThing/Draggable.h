@@ -17,6 +17,18 @@ public:
 	virtual void draw(sf::RenderWindow& window) = 0;
 	virtual bool contains(const sf::Vector2f& point) const = 0;
 	virtual void update(float deltaTime) = 0;
+
+	void startDragging()
+	{
+		isDragging = true;
+	}
+
+	void stopDragging()
+	{
+		isDragging = false;
+	}
+
+	bool isDragging = false;
 };
 
 #endif
