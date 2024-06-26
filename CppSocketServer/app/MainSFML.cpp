@@ -1,57 +1,87 @@
 #include <SFML/Graphics.hpp>
-#include <cmath>
-#include <iostream>
-using namespace std;
+#include <vector>
+#include <memory>
+#include "ObjectThing/DraggableCircle.h"
+#include "ObjectThing/DraggableRectangle.h"
+#include "ObjectThing/DraggableCircle2.h"
+int main()
+{
+	sf::RenderWindow window(sf::VideoMode(800, GROUND_HEIGHT+10), "Draggable Shapes with Gravity");
+	std::vector<std::unique_ptr<Draggable>> shapes;
 
-// Function to convert degrees to radians
-float degreesToRadians(float degrees) {
-    return degrees * (3.14159265 / 180.0);
-}
+	//shapes.push_back(std::make_unique<DraggableCircle>(50));
+	//shapes.back()->setPosition(sf::Vector2f(200, 200));
 
-int main() {
-    // Create the main window
-    sf::RenderWindow window(sf::VideoMode(800, 600), "2D Simulation");
+	//shapes.push_back(std::make_unique<DraggableRectangle>(sf::Vector2f(200, 100)));
+	//shapes.back()->setPosition(sf::Vector2f(400, 300));
 
-    // Circle properties
-    sf::CircleShape circle(50); // Circle with radius 50
-    circle.setFillColor(sf::Color::Green);
-    circle.setOrigin(50, 50); // Center the circle at its origin
-    circle.setPosition(400, 300); // Center of the window
+	shapes.push_back(std::make_unique<DraggableCircle2>(10, 200));
+	shapes.back()->setPosition(sf::Vector2f(400, 300));
 
-    // Line properties
-    sf::RectangleShape line(sf::Vector2f(200, 5)); // Line with length 200 and thickness 5
-    line.setFillColor(sf::Color::Red);
-    line.setOrigin(0, 2.5); // Set origin to the center of the line's thickness
-    line.setPosition(400, 300); // Start at the circle's center
+	bool isDragging = false;
+	sf::Vector2f offset;
+	Draggable* draggedShape = nullptr;
 
-    // Rotation angle
-    float angle = 0.0;
+	sf::Clock clock;
 
-    // Run the main loop
-    while (window.isOpen()) {
-        // Process events
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
+	while (window.isOpen())
+	{
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			if (event.type == sf::Event::Closed)
+				window.close();
 
-        // Update
-        angle += 0.1; // Rotate the line
-        if (angle > 360) angle = 0;
-        line.setRotation(angle);
+			if (event.type == sf::Event::MouseButtonPressed)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
+					for (auto& shape : shapes)
+					{
+						if (shape->contains(mousePos))
+						{
+							isDragging = true;
+							offset = shape->getPosition() - mousePos;
+							draggedShape = shape.get();
+							break;
+						}
+					}
+				}
+			}
 
-        // Calculate the end position of the line
-        float lineLength = 200;
-        float endX = 400 + lineLength * std::cos(degreesToRadians(angle));
-        float endY = 300 + lineLength * std::sin(degreesToRadians(angle));
+			if (event.type == sf::Event::MouseButtonReleased)
+			{
+				if (event.mouseButton.button == sf::Mouse::Left)
+				{
+					isDragging = false;
+					draggedShape = nullptr;
+				}
+			}
 
-        // Draw everything
-        window.clear();
-        window.draw(circle);
-        window.draw(line);
-        window.display();
-    }
+			if (event.type == sf::Event::MouseMoved)
+			{
+				if (isDragging && draggedShape)
+				{
+					draggedShape->setPosition(sf::Vector2f(event.mouseMove.x, event.mouseMove.y) + offset);
+				}
+			}
+		}
 
-    return 0;
+		float deltaTime = clock.restart().asSeconds();
+
+		for (auto& shape : shapes)
+		{
+			shape->update(deltaTime);
+		}
+
+		window.clear();
+		for (auto& shape : shapes)
+		{
+			shape->draw(window);
+		}
+		window.display();
+	}
+
+	return 0;
 }
