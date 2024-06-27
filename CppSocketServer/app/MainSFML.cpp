@@ -16,7 +16,7 @@ int main()
 	//shapes.back()->setPosition(sf::Vector2f(400, 300));
 
 	shapes.push_back(std::make_unique<DraggableCircle2>(10, 200));
-	shapes.back()->setPosition(sf::Vector2f(400, 300));
+	shapes.back()->setPosition(sf::Vector2f(400, 300), sf::Vector2f{0,0});
 
 	bool isDragging = false;
 	sf::Vector2f offset;
@@ -68,7 +68,7 @@ int main()
 			{
 				if (isDragging && draggedShape)
 				{
-					draggedShape->setPosition(sf::Vector2f(event.mouseMove.x, event.mouseMove.y) + offset);
+					draggedShape->setPosition(sf::Vector2f(event.mouseMove.x, event.mouseMove.y),offset);
 				}
 			}
 		}

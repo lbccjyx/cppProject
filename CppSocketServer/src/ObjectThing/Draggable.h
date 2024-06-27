@@ -11,24 +11,15 @@ class Draggable
 {
 public:
 	virtual ~Draggable() = default;
-	virtual void setPosition(const sf::Vector2f& position) = 0;
+	virtual void setPosition(const sf::Vector2f& oldposition, const sf::Vector2f& offset) = 0;
 	virtual sf::Vector2f getPosition() const = 0;
 	virtual sf::FloatRect getGlobalBounds() const = 0;
 	virtual void draw(sf::RenderWindow& window) = 0;
 	virtual bool contains(const sf::Vector2f& point) const = 0;
 	virtual void update(float deltaTime) = 0;
 
-	void startDragging()
-	{
-		isDragging = true;
-	}
-
-	void stopDragging()
-	{
-		isDragging = false;
-	}
-
-	bool isDragging = false;
+	virtual void startDragging() {};
+	virtual void stopDragging() {};
 };
 
 #endif

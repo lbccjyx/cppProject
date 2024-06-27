@@ -15,9 +15,9 @@ public:
 		velocity = sf::Vector2f(0, 0);
 	}
 
-	void setPosition(const sf::Vector2f& position) override
+	void setPosition(const sf::Vector2f& position, const sf::Vector2f& offset) override
 	{
-		circle.setPosition(position);
+		circle.setPosition(position + offset);
 	}
 
 	sf::Vector2f getPosition() const override
@@ -40,12 +40,13 @@ public:
 		return circle.getGlobalBounds().contains(point);
 	}
 
+	float getRadius() const
+	{
+		return circle.getRadius();
+	}
+
 	void update(float deltaTime) override
 	{
-		if (isDragging)
-		{
-			return;
-		}
 		// Apply gravity   v=u+at
 		if (circle.getPosition().y + circle.getRadius() < GROUND_HEIGHT)
 		{
@@ -56,12 +57,12 @@ public:
 			velocity.y = 0;
 		}
 		// Update position  s = s0 + vt
-		setPosition(circle.getPosition() + velocity * deltaTime);
+		setPosition(circle.getPosition() ,velocity * deltaTime);
 
 		// Prevent from going below ground
 		if (circle.getPosition().y + circle.getRadius() > GROUND_HEIGHT)
 		{
-			setPosition(sf::Vector2f(circle.getPosition().x, GROUND_HEIGHT - circle.getRadius()));
+			setPosition(sf::Vector2f(circle.getPosition().x, GROUND_HEIGHT - circle.getRadius()), sf::Vector2f(0, 0));
 		}
 	}
 

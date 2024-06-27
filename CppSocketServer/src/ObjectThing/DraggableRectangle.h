@@ -14,9 +14,9 @@ public:
 		velocity = sf::Vector2f(0, 0);
 	}
 
-	void setPosition(const sf::Vector2f& position) override
+	void setPosition(const sf::Vector2f& position, const sf::Vector2f& offset) override
 	{
-		rectangle.setPosition(position);
+		rectangle.setPosition(position + offset);
 	}
 
 	sf::Vector2f getPosition() const override
@@ -39,6 +39,7 @@ public:
 		return rectangle.getGlobalBounds().contains(point);
 	}
 
+
 	void update(float deltaTime) override
 	{
 		// Apply gravity
@@ -52,12 +53,12 @@ public:
 		}
 
 		// Update position
-		setPosition(rectangle.getPosition() + velocity * deltaTime);
+		setPosition(rectangle.getPosition(), velocity * deltaTime);
 
 		// Prevent from going below ground
 		if (rectangle.getPosition().y + rectangle.getSize().y / 2 > GROUND_HEIGHT)
 		{
-			setPosition(sf::Vector2f(rectangle.getPosition().x, GROUND_HEIGHT - rectangle.getSize().y / 2));
+			setPosition(sf::Vector2f(rectangle.getPosition().x, GROUND_HEIGHT - rectangle.getSize().y / 2), sf::Vector2f(0, 0));
 		}
 	}
 
