@@ -18,7 +18,6 @@ public:
 		connector.setFillColor(sf::Color::Red);
 		connector.setPosition((leftCircle.getPosition() + rightCircle.getPosition()) / 2.0f);
 
-		velocity = sf::Vector2f(0, 0);
 	}
 
 	void setConnPosition(DraggableCircle* draggedCircle, DraggableCircle* otherCircle, const sf::Vector2f& position, const sf::Vector2f& offset)
@@ -27,8 +26,8 @@ public:
 		draggedCircle->setPosition(position, offset);
 
 		// 获取更新后两个圆的位置
-		sf::Vector2f draggedPosition = draggedCircle->getPosition() + sf::Vector2f(draggedCircle->getRadius(), draggedCircle->getRadius());
-		sf::Vector2f otherPosition = otherCircle->getPosition() + sf::Vector2f(otherCircle->getRadius(), otherCircle->getRadius());
+		sf::Vector2f draggedPosition = draggedCircle->getPosition();
+		sf::Vector2f otherPosition = otherCircle->getPosition();
 
 		// 计算连接轴的方向并确保其长度保持不变
 		sf::Vector2f direction = otherPosition - draggedPosition;
@@ -38,17 +37,34 @@ public:
 		if (currentLength != length)
 		{
 			direction /= currentLength;
-			otherPosition = draggedPosition + direction * length;
-			otherCircle->setPosition(otherPosition, sf::Vector2f(otherCircle->getRadius(), otherCircle->getRadius()));
+			sf::Vector2f newOtherPosition = draggedPosition + direction * length;
+
+			// 检查 newOtherPosition 是否会超过地面
+			if (newOtherPosition.y > GROUND_HEIGHT)
+			{
+				// 计算新位置
+				float deltaY = GROUND_HEIGHT - draggedPosition.y;
+				float deltaX = std::sqrt(length * length - deltaY * deltaY);
+				if (newOtherPosition.x > draggedPosition.x)
+					newOtherPosition.x = draggedPosition.x + deltaX;
+				else
+					newOtherPosition.x = draggedPosition.x - deltaX;
+
+				newOtherPosition.y = GROUND_HEIGHT;
+			}
+			
+			// 设置 otherCircle 位置
+			otherCircle->setPosition(newOtherPosition, sf::Vector2f(0, 0));
+			
 		}
 
 		// 更新连接轴的位置和旋转
-		sf::Vector2f newDraggedPosition = draggedCircle->getPosition() + sf::Vector2f(draggedCircle->getRadius(), draggedCircle->getRadius());
-		sf::Vector2f newOtherPosition = otherCircle->getPosition() + sf::Vector2f(otherCircle->getRadius(), otherCircle->getRadius());
+		sf::Vector2f newDraggedPosition = draggedCircle->getPosition() ;
+		sf::Vector2f newOtherPosition = otherCircle->getPosition() ;
 		connector.setPosition((newDraggedPosition + newOtherPosition) / 2.0f);
 		float angle = std::atan2(newOtherPosition.y - newDraggedPosition.y, newOtherPosition.x - newDraggedPosition.x);
 		connector.setRotation(angle * 180.0f / 3.14159265f);
-	};
+	}
 
 	void setPosition(const sf::Vector2f& position, const sf::Vector2f& offset)
 	{
@@ -121,22 +137,18 @@ public:
 
 	void update(float deltaTime)
 	{
+		// 系统平衡，不需要移动
 		if (leftCircle.getPosition().y >= GROUND_HEIGHT && rightCircle.getPosition().y >= GROUND_HEIGHT)
 			return;
 
+		if (leftCircle.getPosition().x == rightCircle.getPosition().x 
+			&& (leftCircle.getPosition().y >= GROUND_HEIGHT || rightCircle.getPosition().y >= GROUND_HEIGHT))
+			return;
+		
+
 		if (!m_isDragging)
 		{
-			// Apply gravity to the left circle
-			if (leftCircle.getPosition().y < GROUND_HEIGHT)
-			{
-				leftVelocity.y += GRAVITY * deltaTime;
-			}
-			else
-			{
-				leftVelocity.y = 0;
-			}
-
-			// Apply gravity to the right circle
+			// 更新右圆的位置和速度
 			if (rightCircle.getPosition().y < GROUND_HEIGHT)
 			{
 				rightVelocity.y += GRAVITY * deltaTime;
@@ -146,23 +158,19 @@ public:
 				rightVelocity.y = 0;
 			}
 
-		}
-		// Prevent circles from going below ground
-		if (leftCircle.getPosition().y + leftVelocity.y * deltaTime > GROUND_HEIGHT)
-		{
-			this->setConnPosition(&leftCircle, &rightCircle, sf::Vector2f(leftCircle.getPosition().x, GROUND_HEIGHT), sf::Vector2f(0, 0));
-			leftVelocity.y = 0;
+			if (leftCircle.getPosition().y < GROUND_HEIGHT)
+			{
+				leftVelocity.y += GRAVITY * deltaTime;
+			}
+			else
+			{
+				leftVelocity.y = 0;
+			}
 		}
 
-		if (rightCircle.getPosition().y + leftVelocity.y * deltaTime > GROUND_HEIGHT)
-		{
-			this->setConnPosition(&rightCircle, &leftCircle, sf::Vector2f(rightCircle.getPosition().x, GROUND_HEIGHT), sf::Vector2f(0, 0));
-			rightVelocity.y = 0;
-		}
-		// Update positions of the circles
-		this->setConnPosition(&rightCircle, &leftCircle, leftCircle.getPosition(), leftVelocity * deltaTime);
-		this->setConnPosition(&leftCircle, &rightCircle, rightCircle.getPosition(), rightVelocity * deltaTime);
-
+		// 更新位置，确保连接轴长度和地面接触处理
+		this->setConnPosition(&rightCircle, &leftCircle, rightCircle.getPosition() + rightVelocity * deltaTime, sf::Vector2f(0, 0));
+		this->setConnPosition(&leftCircle, &rightCircle, leftCircle.getPosition() + leftVelocity * deltaTime, sf::Vector2f(0, 0));
 	}
 
 
@@ -180,7 +188,6 @@ private:
 	DraggableCircle leftCircle;
 	DraggableCircle rightCircle;
 	sf::RectangleShape connector;
-	sf::Vector2f velocity;
 	sf::Vector2f leftVelocity;
 	sf::Vector2f rightVelocity;
 	float length;

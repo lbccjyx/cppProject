@@ -5,7 +5,7 @@
 #ifndef _DRAGABLE_H_
 #define  _DRAGABLE_H_
 
-const float GRAVITY = 980.0f; // 重力加速度 通常是9.8m/s^2 但是这里没有m只有980px/s^2
+const float GRAVITY = 9.8f; // 重力加速度 通常是9.8m/s^2 但是这里没有m只有980px/s^2
 const float GROUND_HEIGHT = 550.0f; // 地面高度
 class Draggable
 {
