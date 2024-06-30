@@ -17,11 +17,12 @@ public:
 		connector.setOrigin(length / 2, radius);
 		connector.setFillColor(sf::Color::Red);
 		connector.setPosition((leftCircle.getPosition() + rightCircle.getPosition()) / 2.0f);
-
 	}
 
 	void setConnPosition(DraggableCircle* draggedCircle, DraggableCircle* otherCircle, const sf::Vector2f& position, const sf::Vector2f& offset)
 	{
+		if(draggedCircle->getPosition() == position && offset == sf::Vector2f(0, 0))
+			return;
 		// 更新被拖动的圆的位置
 		draggedCircle->setPosition(position, offset);
 
@@ -126,12 +127,11 @@ public:
 
 	bool contains(const sf::Vector2f& point) const
 	{
-		return leftCircle.contains(point) || rightCircle.contains(point)|| CenterContains(point);
+		return this->getGlobalBounds().contains(point);
 	}
 
 	bool CenterContains(const sf::Vector2f& point) const
 	{
-		return false;
 		return connector.getGlobalBounds().contains(point);
 	}
 
@@ -145,32 +145,9 @@ public:
 			&& (leftCircle.getPosition().y >= GROUND_HEIGHT || rightCircle.getPosition().y >= GROUND_HEIGHT))
 			return;
 		
+		this->setConnPosition(&rightCircle, &leftCircle, rightCircle.getUpdatePosition(deltaTime), sf::Vector2f(0, 0));
+		this->setConnPosition(&leftCircle, &rightCircle, leftCircle.getUpdatePosition(deltaTime), sf::Vector2f(0, 0));
 
-		if (!m_isDragging)
-		{
-			// 更新右圆的位置和速度
-			if (rightCircle.getPosition().y < GROUND_HEIGHT)
-			{
-				rightVelocity.y += GRAVITY * deltaTime;
-			}
-			else
-			{
-				rightVelocity.y = 0;
-			}
-
-			if (leftCircle.getPosition().y < GROUND_HEIGHT)
-			{
-				leftVelocity.y += GRAVITY * deltaTime;
-			}
-			else
-			{
-				leftVelocity.y = 0;
-			}
-		}
-
-		// 更新位置，确保连接轴长度和地面接触处理
-		this->setConnPosition(&rightCircle, &leftCircle, rightCircle.getPosition() + rightVelocity * deltaTime, sf::Vector2f(0, 0));
-		this->setConnPosition(&leftCircle, &rightCircle, leftCircle.getPosition() + leftVelocity * deltaTime, sf::Vector2f(0, 0));
 	}
 
 
@@ -182,8 +159,27 @@ public:
 	{
 		m_isDragging = false;
 	};
+	DraggableCircle2() = delete;
 
+	void setLeftCirPosition(const sf::Vector2f& position)
+	{
+		setConnPosition(&leftCircle, &rightCircle, position, sf::Vector2f(0, 0));
+		//leftCircle.setPosition(position, sf::Vector2f(0, 0));
+	}
+	sf::Vector2f getLeftCirPosition()
+	{
+		return leftCircle.getPosition();
+	}
 
+	void setRightCirPosition(const sf::Vector2f& position)
+	{
+		setConnPosition(&rightCircle, &leftCircle, position, sf::Vector2f(0, 0));
+		//rightCircle.setPosition(position, sf::Vector2f(0, 0));
+	}
+	sf::Vector2f getRightCirPosition()
+	{
+		return rightCircle.getPosition();
+	}
 private:
 	DraggableCircle leftCircle;
 	DraggableCircle rightCircle;
@@ -195,5 +191,71 @@ private:
 
 };
 
+
+class DraggableCircle3:public DraggableCircle2
+{
+public:
+	DraggableCircle3(float radius, float length):DraggableCircle2(radius, length)
+	{
+		m_Circle2A = new DraggableCircle2(radius, length);
+		m_Circle2B = new DraggableCircle2(radius, length);
+	}
+
+	~DraggableCircle3()
+	{
+		if(m_Circle2A)
+			delete m_Circle2A;
+		if(m_Circle2B)
+			delete m_Circle2B;
+	}
+
+	void update(float deltaTime) override
+	{
+		m_Circle2A->update(deltaTime);
+		m_Circle2B->setRightCirPosition(m_Circle2A->getLeftCirPosition());
+		m_Circle2B->update(deltaTime);
+		m_Circle2A->setLeftCirPosition(m_Circle2B->getRightCirPosition());
+	}
+	void draw(sf::RenderWindow& window) override
+	{
+		m_Circle2A->draw(window);
+		m_Circle2B->draw(window);
+	}
+
+	bool contains(const sf::Vector2f& point) const
+	{
+		return m_Circle2A->getGlobalBounds().contains(point) || 
+			m_Circle2B->getGlobalBounds().contains(point);
+	}
+
+	void startDragging() override
+	{
+		m_Circle2A->startDragging();
+		m_Circle2B->startDragging();
+	};
+	void stopDragging() override
+	{
+		m_Circle2A->stopDragging();
+		m_Circle2B->stopDragging();
+	};
+
+	void setPosition(const sf::Vector2f& position, const sf::Vector2f& offset) override
+	{
+		if (m_Circle2A->contains(position))
+		{
+			m_Circle2A->setPosition(position, offset);
+			m_Circle2B->setRightCirPosition(m_Circle2A->getLeftCirPosition());
+		}
+		else if (m_Circle2B->contains(position))
+		{
+			m_Circle2B->setPosition(position, offset);
+			m_Circle2A->setLeftCirPosition(m_Circle2B->getRightCirPosition());
+		}
+	}
+
+private:
+	DraggableCircle2* m_Circle2A;
+	DraggableCircle2* m_Circle2B;
+};
 
 #endif

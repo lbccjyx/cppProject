@@ -45,10 +45,15 @@ public:
 		return circle.getRadius();
 	}
 
-	void update(float deltaTime) override
+	sf::Vector2f getUpdatePosition(float deltaTime)
 	{
+		if (circle.getPosition().y >= GROUND_HEIGHT)
+		{
+			velocity.y = 0;
+			return circle.getPosition();
+		}
 		// Apply gravity   v=u+at
-		if (circle.getPosition().y + circle.getRadius() < GROUND_HEIGHT)
+		if (circle.getPosition().y < GROUND_HEIGHT)
 		{
 			velocity.y += GRAVITY * deltaTime;
 		}
@@ -56,14 +61,21 @@ public:
 		{
 			velocity.y = 0;
 		}
-		// Update position  s = s0 + vt
-		setPosition(circle.getPosition() ,velocity * deltaTime);
 
-		// Prevent from going below ground
-		if (circle.getPosition().y + circle.getRadius() > GROUND_HEIGHT)
+		if ((circle.getPosition() + velocity * deltaTime).y > GROUND_HEIGHT)
 		{
-			setPosition(sf::Vector2f(circle.getPosition().x, GROUND_HEIGHT - circle.getRadius()), sf::Vector2f(0, 0));
+			return sf::Vector2f(circle.getPosition().x, GROUND_HEIGHT); 
 		}
+		else
+		{
+			return circle.getPosition() + velocity * deltaTime;
+		}
+
+	}
+
+	void update(float deltaTime) override
+	{
+		setPosition(this->getUpdatePosition(deltaTime), sf::Vector2f(0, 0));		
 	}
 
 private:
