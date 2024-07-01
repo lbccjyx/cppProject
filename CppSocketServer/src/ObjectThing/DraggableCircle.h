@@ -47,11 +47,6 @@ public:
 
 	sf::Vector2f getUpdatePosition(float deltaTime)
 	{
-		if (circle.getPosition().y >= GROUND_HEIGHT)
-		{
-			velocity.y = 0;
-			return circle.getPosition();
-		}
 		// Apply gravity   v=u+at
 		if (circle.getPosition().y < GROUND_HEIGHT)
 		{
@@ -59,7 +54,8 @@ public:
 		}
 		else
 		{
-			velocity.y = 0;
+			resetVelocity();
+			return circle.getPosition();
 		}
 
 		if ((circle.getPosition() + velocity * deltaTime).y > GROUND_HEIGHT)
@@ -72,7 +68,15 @@ public:
 		}
 
 	}
-
+	
+	void resetVelocity()
+	{
+		velocity = sf::Vector2f(0, 0);
+	}
+	float GetVelocity()
+	{
+		return velocity.y;
+	}
 	void update(float deltaTime) override
 	{
 		setPosition(this->getUpdatePosition(deltaTime), sf::Vector2f(0, 0));		

@@ -145,8 +145,19 @@ public:
 			&& (leftCircle.getPosition().y >= GROUND_HEIGHT || rightCircle.getPosition().y >= GROUND_HEIGHT))
 			return;
 		
-		this->setConnPosition(&rightCircle, &leftCircle, rightCircle.getUpdatePosition(deltaTime), sf::Vector2f(0, 0));
-		this->setConnPosition(&leftCircle, &rightCircle, leftCircle.getUpdatePosition(deltaTime), sf::Vector2f(0, 0));
+		if (!m_isDragging)
+		{
+			if (rightCircle.GetVelocity() > leftCircle.GetVelocity())
+			{
+				this->setConnPosition(&rightCircle, &leftCircle, rightCircle.getUpdatePosition(deltaTime), sf::Vector2f(0, 0));
+				this->setConnPosition(&leftCircle, &rightCircle, leftCircle.getUpdatePosition(deltaTime), sf::Vector2f(0, 0));
+			}
+			else
+			{
+				this->setConnPosition(&leftCircle, &rightCircle, leftCircle.getUpdatePosition(deltaTime), sf::Vector2f(0, 0));
+				this->setConnPosition(&rightCircle, &leftCircle, rightCircle.getUpdatePosition(deltaTime), sf::Vector2f(0, 0));
+			}
+		}
 
 	}
 
@@ -157,6 +168,8 @@ public:
 	};
 	void stopDragging() override
 	{
+		rightCircle.resetVelocity();
+		leftCircle.resetVelocity();
 		m_isDragging = false;
 	};
 	DraggableCircle2() = delete;
@@ -192,7 +205,7 @@ private:
 };
 
 
-class DraggableCircle3:public DraggableCircle2
+class DraggableCircle3: public DraggableCircle2
 {
 public:
 	DraggableCircle3(float radius, float length):DraggableCircle2(radius, length)
