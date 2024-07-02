@@ -226,69 +226,107 @@ class DraggableCircle3: public DraggableCircle2
 {
 public:
 	//  Pos1  sf::Vector2f(0, GROUND_HEIGHT)  Pos2 sf::Vector2f(length, GROUND_HEIGHT)
-	DraggableCircle3(float radius, float length):DraggableCircle2(radius, length, sf::Vector2f(0, GROUND_HEIGHT), sf::Vector2f(length, GROUND_HEIGHT))
+	DraggableCircle3(float radius, float length, int nNum):DraggableCircle2(radius, length, sf::Vector2f(0, GROUND_HEIGHT), sf::Vector2f(length, GROUND_HEIGHT))
 	{
-		m_Circle2A = new DraggableCircle2(radius, length, sf::Vector2f(0, 0.5*GROUND_HEIGHT), sf::Vector2f(length, 0.5 * GROUND_HEIGHT));
-		m_Circle2B = new DraggableCircle2(radius, length, sf::Vector2f(length, 0.5 * GROUND_HEIGHT), sf::Vector2f(2 * length, 0.5 * GROUND_HEIGHT));
+		for (int i = 0; i < nNum; i++)
+		{
+			DraggableCircle2* pCircle = new DraggableCircle2(radius, length, sf::Vector2f(i * length, 0.5 * GROUND_HEIGHT), sf::Vector2f((i + 1) * length, 0.5 * GROUND_HEIGHT));
+			m_listCircle.push_back(pCircle);
+		}
 	}
 
 	~DraggableCircle3()
 	{
-		if(m_Circle2A)
-			delete m_Circle2A;
-		if(m_Circle2B)
-			delete m_Circle2B;
+		if (m_listCircle.size() > 0)
+		{
+			for (auto pCircle : m_listCircle)
+			{
+				delete pCircle;
+			}
+			m_listCircle.clear();
+		}
 	}
 
 	void update(float deltaTime) override
 	{
-		m_Circle2A->update(deltaTime); 
-		m_Circle2B->update(deltaTime);
-		m_Circle2A->setRightCirPosition(m_Circle2B->getLeftCirPosition());
-		m_Circle2B->setLeftCirPosition(m_Circle2A->getRightCirPosition());
+		for (auto pCircle : m_listCircle)
+		{
+			pCircle->update(deltaTime);
+		}
+
+		auto it = m_listCircle.begin();
+		auto end = std::prev(m_listCircle.end());
+		for (; it != end; ++it)
+		{
+			auto next = std::next(it);
+			(*it)->setRightCirPosition((*next)->getLeftCirPosition());
+			(*next)->setLeftCirPosition((*it)->getRightCirPosition());
+		}
+
 	}
 	void draw(sf::RenderWindow& window) override
 	{
-		m_Circle2A->draw(window);
-		m_Circle2B->draw(window);
+		for (auto pCircle : m_listCircle)
+		{
+			pCircle->draw(window);
+		}
 	}
 
 	bool contains(const sf::Vector2f& point) const
 	{
-		return m_Circle2A->getGlobalBounds().contains(point) || 
-			m_Circle2B->getGlobalBounds().contains(point);
+		bool bRet = false;
+		for (auto pCircle : m_listCircle)
+		{
+			if (pCircle->getGlobalBounds().contains(point))
+			{
+				bRet = true;
+				break;
+			}
+		}
+		return bRet;
 	}
 
 	void startDragging() override
 	{
-		m_Circle2A->startDragging();
-		m_Circle2B->startDragging();
+		for (auto pCircle : m_listCircle)
+		{
+			pCircle->startDragging();
+		}
 	};
 	void stopDragging() override
 	{
-		m_Circle2A->stopDragging();
-		m_Circle2B->stopDragging();
+		for (auto pCircle : m_listCircle)
+		{
+			pCircle->stopDragging();
+		}
 	};
 
 	void setPosition(const sf::Vector2f& position, const sf::Vector2f& offset) override
 	{
-		if (m_Circle2A->contains(position))
+		for (auto it = m_listCircle.begin(); it != m_listCircle.end(); ++it)
 		{
-			m_Circle2A->setPosition(position, offset);
-			m_Circle2B->setLeftCirPosition(m_Circle2A->getRightCirPosition());
+			if ((*it)->contains(position))
+			{
+				(*it)->setPosition(position, offset);
+
+				auto next = std::next(it);
+				if (next != m_listCircle.end())
+					(*next)->setLeftCirPosition((*it)->getRightCirPosition());
+
+				if (it != m_listCircle.begin())
+					(*std::prev(it))->setRightCirPosition((*it)->getLeftCirPosition());
+				// 不再使用 break 语句
+			}
 		}
-		else if (m_Circle2B->contains(position))
+
+		for (auto pCircle : m_listCircle)
 		{
-			m_Circle2B->setPosition(position, offset);
-			m_Circle2A->setRightCirPosition(m_Circle2B->getLeftCirPosition());
+			pCircle->resetVelocity();
 		}
-		m_Circle2A->resetVelocity();
-		m_Circle2B->resetVelocity();
 	}
 
 private:
-	DraggableCircle2* m_Circle2A;
-	DraggableCircle2* m_Circle2B;
+	std::list<DraggableCircle2*> m_listCircle;
 };
 
 #endif

@@ -15,7 +15,7 @@ int main()
 	//shapes.push_back(std::make_unique<DraggableRectangle>(sf::Vector2f(200, 100)));
 	//shapes.back()->setPosition(sf::Vector2f(400, 300));
 
-	shapes.push_back(std::make_unique<DraggableCircle3>(10, 200));
+	shapes.push_back(std::make_unique<DraggableCircle3>(10, 200, 3));
 	shapes.back()->setPosition(sf::Vector2f(400, 300), sf::Vector2f{0,0});
 
 	bool isDragging = false;
