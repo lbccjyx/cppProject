@@ -3,3 +3,6 @@
 ################################################################################
 
 /CppSocketServer/cfg/configurl.txt
+/.vs/ProjectSettings.json
+/.vs/slnx.sqlite
+/.vs/VSWorkspaceState.json
