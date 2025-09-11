@@ -6,6 +6,9 @@ set_property(DIRECTORY PROPERTY VS_STARTUP_PROJECT CppSocketServer)
 # Include Conan generated files
 include(${CMAKE_BINARY_DIR}/conan_toolchain.cmake)
 
+include_directories("C:/.conan/p/nlohm0567ffc90cfc1/p/include")
+include_directories("C:/.conan/p/websof2226ef4bf37c/p/include")
+
 if(WIN32)
     set(CMAKE_GENERATOR_PLATFORM "x64")
     set(CMAKE_GENERATOR "Visual Studio 17 2022")
@@ -19,7 +22,6 @@ file(GLOB_RECURSE
 file(GLOB_RECURSE src ${CMAKE_CURRENT_SOURCE_DIR}/src/*.cpp)
 set(all_files ${head} ${src})   
 
-#find_package(Boost REQUIRED)
 find_package(Boost 1.83.0 REQUIRED COMPONENTS thread system random chrono)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
@@ -64,35 +66,6 @@ set_target_properties(CppWebSocketServer PROPERTIES
 configure_file(cfg/config.txt ${CMAKE_BINARY_DIR}/config.txt COPYONLY)
 
 
-#######################################SFML######################################
-# Find SFML package
-find_package(SFML)
-
-# Add executable target
-add_executable(CppSFML
-    app/MainSFML.cpp 
-    ${all_files}
-)
-
-# Include directories
-target_include_directories(CppSFML 
-    PUBLIC 
-    ${CMAKE_CURRENT_SOURCE_DIR}/src
-    ${CMAKE_INCLUDE_PATH}
-)
-
-# Link libraries
-target_link_libraries(CppSFML 
-    ${Boost_LIBRARIES}
-    sfml-graphics sfml-window sfml-system
-)
-
-# Set target properties
-set_target_properties(CppSFML PROPERTIES
-    RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/cppsfml
-)
-
-
 #######################################another one######################################
 file(GLOB_RECURSE src2 ${CMAKE_CURRENT_SOURCE_DIR}/test/*.cpp)
 set(all_files_2 ${head} ${src} ${src2})
@@ -113,6 +86,9 @@ target_include_directories(Test1Any
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_INCLUDE_PATH}
     )
+target_link_libraries(Test1Any
+    ${Boost_LIBRARIES}
+)
 set_target_properties(Test1Any PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_test
 )
@@ -140,6 +116,9 @@ target_include_directories(Test2Any
     ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_INCLUDE_PATH}
     )
+target_link_libraries(Test2Any
+    ${Boost_LIBRARIES}
+)
 set_target_properties(Test2Any PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin_test2
 )

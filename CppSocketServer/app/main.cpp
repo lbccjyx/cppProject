@@ -14,7 +14,7 @@ using namespace std;
 #define Tcsdup _strdup
 #endif
 
-// å†™ä¸€ä¸ªç±»å®ç°threadFunctionçš„åŠŸèƒ½ æœ‰è¯»å–æ–‡ä»¶ï¼Œé‡æ–°è¯»å–é…ç½®æ–‡ä»¶ï¼Œç›‘å¬,answerç­‰ç­‰
+// Ğ´Ò»¸öÀàÊµÏÖthreadFunctionµÄ¹¦ÄÜ ÓĞ¶ÁÈ¡ÎÄ¼ş£¬ÖØĞÂ¶ÁÈ¡ÅäÖÃÎÄ¼ş£¬¼àÌı,answerµÈµÈ
 class CThreadFunction {
 public:
 	CThreadFunction() {}
@@ -41,15 +41,15 @@ public:
 			Socket* s = pIn->Accept();
 			std::thread t(&CThreadFunction::answer, this, s);
 			/*
-				t.detach() æ˜¯ C++11 ä¸­ std::thread ç±»çš„æˆå‘˜å‡½æ•°ï¼Œç”¨äºå°†çº¿ç¨‹ä¸ std::thread å¯¹è±¡åˆ†ç¦»ï¼Œå…è®¸çº¿ç¨‹åœ¨åå°è¿è¡Œè€Œä¸ä¼šè¢«ä¸»çº¿ç¨‹æ‰€ç®¡ç†ã€‚
-				è¿™ç§åˆ†ç¦»å…è®¸å­çº¿ç¨‹åœ¨åå°ç‹¬ç«‹è¿è¡Œï¼Œç›´åˆ°å…¶è‡ªç„¶ç»“æŸï¼Œè€Œä¸éœ€è¦ä¸»çº¿ç¨‹ç­‰å¾…å…¶æ‰§è¡Œå®Œæ¯•ã€‚è¢«åˆ†ç¦»çš„çº¿ç¨‹å®ä¾‹ä¼šè‡ªåŠ¨é‡Šæ”¾å…¶èµ„æºï¼Œæ— éœ€æ˜¾å¼åœ°è°ƒç”¨ join() æˆ– detach()ã€‚
+				t.detach() ÊÇ C++11 ÖĞ std::thread ÀàµÄ³ÉÔ±º¯Êı£¬ÓÃÓÚ½«Ïß³ÌÓë std::thread ¶ÔÏó·ÖÀë£¬ÔÊĞíÏß³ÌÔÚºóÌ¨ÔËĞĞ¶ø²»»á±»Ö÷Ïß³ÌËù¹ÜÀí¡£
+				ÕâÖÖ·ÖÀëÔÊĞí×ÓÏß³ÌÔÚºóÌ¨¶ÀÁ¢ÔËĞĞ£¬Ö±µ½Æä×ÔÈ»½áÊø£¬¶ø²»ĞèÒªÖ÷Ïß³ÌµÈ´ıÆäÖ´ĞĞÍê±Ï¡£±»·ÖÀëµÄÏß³ÌÊµÀı»á×Ô¶¯ÊÍ·ÅÆä×ÊÔ´£¬ÎŞĞèÏÔÊ½µØµ÷ÓÃ join() »ò detach()¡£
 			*/
 			t.detach();
 		}
 	}
 private:
 	bool executeCommand(const TCHAR* command, const TCHAR* workingDirectory) {
-		// åˆå§‹åŒ–STARTUPINFOå’ŒPROCESS_INFORMATIONç»“æ„
+		// ³õÊ¼»¯STARTUPINFOºÍPROCESS_INFORMATION½á¹¹
 		STARTUPINFO si;
 		PROCESS_INFORMATION pi;
 		ZeroMemory(&si, sizeof(si));
@@ -59,13 +59,13 @@ private:
 
 		TCHAR* commandCopy = Tcsdup(command);
 
-		// åˆ›å»ºè¿›ç¨‹
+		// ´´½¨½ø³Ì
 		if (CreateProcess(NULL, commandCopy, NULL, NULL, FALSE, 0, NULL,
 			workingDirectory, &si, &pi)) {
-			// ç­‰å¾…è¿›ç¨‹ç»“æŸ 0.5ç§’åç›´æ¥æ”¾å¼ƒç­‰å¾…
+			// µÈ´ı½ø³Ì½áÊø 0.5ÃëºóÖ±½Ó·ÅÆúµÈ´ı
 			WaitForSingleObject(pi.hProcess, 500);
 
-			// å…³é—­è¿›ç¨‹å’Œçº¿ç¨‹çš„å¥æŸ„ ä½†æ˜¯ç¨‹åºä¾æ—§è¿è¡Œ
+			// ¹Ø±Õ½ø³ÌºÍÏß³ÌµÄ¾ä±ú µ«ÊÇ³ÌĞòÒÀ¾ÉÔËĞĞ
 			CloseHandle(pi.hProcess);
 			CloseHandle(pi.hThread);
 
@@ -78,27 +78,27 @@ private:
 		}
 	}
 
-	// åˆ é™¤å­—ç¬¦ä¸²åé¢çš„æ¢è¡Œç¬¦
+	// É¾³ı×Ö·û´®ºóÃæµÄ»»ĞĞ·û
 	static inline void removeTrailingNewline(std::string& s) {
 		s.erase(s.find_last_not_of("\n\r") + 1);
 	}
 	bool readConfig() {
-		//åˆå§‹åŒ–myCmdDataJson
+		//³õÊ¼»¯myCmdDataJson
 		myCmdDataJson.clear();
 
 		std::ifstream f("listen_cmd_server_cfg.json");
 		if (!f) {
-			XXPrint("æ— æ³•æ‰“å¼€æ–‡ä»¶ cmd.json\n");
+			XXPrint("ÎŞ·¨´ò¿ªÎÄ¼ş cmd.json\n");
 			return false;
 		}
 		try {
 			myCmdDataJson = json::parse(f);
 		} catch (json::parse_error& e) {
-			XXPrint("è§£æJSONæ•°æ®æ—¶å‘ç”Ÿé”™è¯¯: " ,e.what(),'\n');
+			XXPrint("½âÎöJSONÊı¾İÊ±·¢Éú´íÎó: " ,e.what(),'\n');
 			return false;
 		}
 
-		XXPrint(" è¯»å–é…ç½®æ–‡ä»¶ listen_cmd_server_cfg.jsonå®Œæ¯•\n");
+		XXPrint(" ¶ÁÈ¡ÅäÖÃÎÄ¼ş listen_cmd_server_cfg.jsonÍê±Ï\n");
 		return true;
 	}
 
@@ -108,7 +108,7 @@ private:
 			this->pIn = new SocketServer(myCmdDataJson["listenPort"], 30);
 		}
 		catch (const char* msg) {
-			XXPrint("åˆå§‹åŒ–å¤±è´¥ ç«¯å£å ç”¨", msg, "\n æ‰€ä»¥éœ€è¦æ¢ä¸ªç«¯å£ \n");
+			XXPrint("³õÊ¼»¯Ê§°Ü ¶Ë¿ÚÕ¼ÓÃ", msg, "\n ËùÒÔĞèÒª»»¸ö¶Ë¿Ú \n");
 			return false;
 		}
 		return true;
@@ -137,7 +137,7 @@ private:
 					break;
 
 #ifdef UNICODE
-				XXPrint("åŒ¹é…å‘½ä»¤:\tDIR:", strDir, "\tCMD:", strCMD, "\n");
+				XXPrint("Æ¥ÅäÃüÁî:\tDIR:", strDir, "\tCMD:", strCMD, "\n");
 				wchar_t* wcDir = new wchar_t[strDir.size()];
 				swprintf(wcDir, strDir.size() + 1, L"%S", strDir.c_str());
 
@@ -164,7 +164,7 @@ int main(int argc, char* argv[]) {
 	ThreadPrintManager ctpm;
 
 	//std::thread t(threadFunction);
-	// å¤šçº¿ç¨‹ä½¿ç”¨CThreadFunction çš„listen
+	// ¶àÏß³ÌÊ¹ÓÃCThreadFunction µÄlisten
 	CThreadFunction ctf;
 	if (!ctf.init())
 		return 0;
