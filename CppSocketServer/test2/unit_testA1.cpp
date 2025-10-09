@@ -170,6 +170,34 @@ public:
 	// 给定 n 个非负整数表示每个宽度为 1 的柱子的高度图，计算按此排列的柱子，下雨之后能接多少雨水。
 	int trap(vector<int>& height) {
 
+		int left = 0, right = height.size() - 1;
+		int left_max = 0, right_max = 0;
+		int water = 0;
+
+		while (left < right) {
+			if (height[left] < height[right]) {
+				// 左边较矮，处理左边
+				if (height[left] >= left_max) {
+					left_max = height[left];  // 更新左边最大值
+				}
+				else {
+					water += left_max - height[left];  // 接雨水
+				}
+				left++;
+			}
+			else {
+				// 右边较矮，处理右边
+				if (height[right] >= right_max) {
+					right_max = height[right];  // 更新右边最大值
+				}
+				else {
+					water += right_max - height[right];  // 接雨水
+				}
+				right--;
+			}
+		}
+
+		return water;
 	}
 
 };
