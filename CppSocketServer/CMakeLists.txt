@@ -98,7 +98,7 @@ configure_file(cfg/cout.bat ${CMAKE_BINARY_DIR}/bin_test/Debug/cout.bat COPYONLY
 #######################################another one######################################
 
 file(GLOB_RECURSE src3 ${CMAKE_CURRENT_SOURCE_DIR}/test2/*.cpp)
-set(all_files_3 ${head} ${src} ${src3})
+set(all_files_3 ${src3})
 
 foreach(file ${all_files_3})
     file(RELATIVE_PATH relative_file ${CMAKE_CURRENT_SOURCE_DIR} ${file})
