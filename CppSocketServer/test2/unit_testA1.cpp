@@ -200,11 +200,179 @@ public:
 		return water;
 	}
 
+	// 无重复字符的最长子串
+	static int lengthOfLongestSubstring(string s) {
+		// 	给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串 的长度。
+		std::unordered_set<char> char_set;
+		int max_len = 0;
+		int nTmpStart = 0;
+		for (int i = 0; i < s.size(); i++)
+		{
+			if (char_set.contains(s[i]))
+			{
+				max_len = max(max_len, (int)char_set.size());
+				char_set.clear();  // 清空之前的字符
+
+				i = nTmpStart;
+			}
+			else
+			{
+				if(char_set.empty())
+					nTmpStart = i;
+
+				char_set.insert(s[i]);
+			}
+		}
+		max_len = max(max_len, (int)char_set.size());
+		return max_len;
+	}
+	int lengthOfLongestSubstring2(string s) 
+	{
+		// 	给定一个字符串 s ，请你找出其中不含有重复字符的 最长 子串 的长度。
+		std::unordered_set<char> char_set;
+		int max_len = 0;
+		int left = 0;  // 滑动窗口的左边界
+
+		for (int right = 0; right < s.size(); right++) {
+			// 如果当前字符已经在集合中，移动左边界直到移除重复字符
+			while (char_set.count(s[right])) {
+				char_set.erase(s[left]);
+				left++;
+			}
+
+			// 将当前字符加入集合
+			char_set.insert(s[right]);
+
+			// 更新最大长度
+			max_len = max(max_len, right - left + 1);
+		}
+
+		return max_len;
+	}
+
+	// 找到字符串中所有字母异位词
+	vector<int> findAnagrams(string s, string p) {
+		// 找到 s 中所有 p 的 异位词 的子串，返回这些子串的起始索引。
+		vector<int> result;
+		int n = s.length();
+		int m = p.length();
+		unordered_set<char> p_set(p.begin(), p.end());
+		map<int, string> map_sub_strs;
+		string pSort = p;
+		sort(pSort.begin(), pSort.end());  // 排序后的p
+
+
+		for (int i = 0; i < n; i++)
+		{
+			if (p_set.contains(s[i]))
+			{
+				map_sub_strs.insert(pair<int, string>(i, s.substr(i, m)));
+			}
+		}
+
+		for (auto& [index, sub_str] : map_sub_strs)
+		{
+			sort(sub_str.begin(), sub_str.end());  // 排序后的sub_str
+			if(sub_str == pSort)
+				result.push_back(index);
+		}
+
+		return result;
+
+	}
+	vector<int> findAnagrams2(string s, string p)
+	{
+		vector<int> result;
+		int n = s.length();
+		int m = p.length();
+
+		if (n < m) return result;
+
+		// 统计 p 中每个字符的频率
+		vector<int> p_count(26, 0);
+		vector<int> window_count(26, 0);
+
+		for (char c : p) {
+			p_count[c - 'a']++;
+		}
+
+		// 初始化第一个窗口
+		for (int i = 0; i < m; i++) {
+			window_count[s[i] - 'a']++;
+		}
+
+		// 检查第一个窗口
+		if (window_count == p_count) {
+			result.push_back(0);
+		}
+
+		// 滑动窗口
+		for (int i = m; i < n; i++) {
+			// 移除左边界的字符
+			window_count[s[i - m] - 'a']--;
+			// 添加右边界的字符
+			window_count[s[i] - 'a']++;
+
+			// 检查当前窗口是否为异位词
+			if (window_count == p_count) {
+				result.push_back(i - m + 1);
+			}
+		}
+
+		return result;
+		
+	}
+
+	// 和为 K 的子数组
+	static int subarraySum(vector<int>& nums, int k) {
+		// 给你一个整数数组 nums 和一个整数 k ，请你统计并返回 该数组中和为 k 的子数组的个数 。
+		unordered_map<int, int> mp;
+		mp[0] = 1;
+		int count = 0, pre = 0;
+		for (auto& x : nums) {
+			pre += x;
+			if (mp.contains(pre - k)) {
+				count += mp[pre - k];
+			}
+			mp[pre]++;
+		}
+		return count;
+	}
+
+	//  滑动窗口最大值
+	static vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+		// 给你一个整数数组 nums，有一个大小为 k 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 k 个数字。滑动窗口每次只向右移动一位。 返回 滑动窗口中的最大值 。
+
+		vector<int> result;
+		deque<int> dq; // 存储索引，而不是值
+
+		for (int i = 0; i < nums.size(); i++) {
+			// 移除超出窗口范围的元素
+			if (!dq.empty() && dq.front() == i - k) {
+				dq.pop_front();
+			}
+
+			// 维护单调递减队列
+			while (!dq.empty() && nums[dq.back()] < nums[i]) {
+				dq.pop_back();
+			}
+
+			dq.push_back(i);
+
+			// 当窗口形成时，添加结果
+			if (i >= k - 1) {
+				result.push_back(nums[dq.front()]);
+			}
+		}
+
+		return result;
+	}
+
 };
 
 BOOST_AUTO_TEST_CASE(my_testA15) {
-	vector<int> a = { 100, 4, 200, 1, 3, 2 };
-	Solution::longestConsecutive(a);
+	vector<int> a = { 1,3,-1,-3,5,3,6,7 };
+	Solution::maxSlidingWindow(a, 3);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
